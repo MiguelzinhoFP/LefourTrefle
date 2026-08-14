@@ -11,6 +11,8 @@
 
   <!-- SDK Oficial do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- CARREGAMENTO DO CONFIG.JS (Substitui a leitura do .env) -->
   <script src="config.js"></script>
 </head>
 <body class="bg-pink-50 min-h-screen text-gray-800 font-sans">
@@ -343,54 +345,28 @@
   <script>
     const SHOP_WHATSAPP = "5511999999999";
 
-    // Instância global do Supabase (será criada a partir do arquivo .env)
+    // 1. OBTÉM AS CHAVES DO CONFIG.JS (window.env)
+    const env = window.env || {};
+    const SUPABASE_URL = env.SUPABASE_URL || '';
+    const SUPABASE_KEY = env.SUPABASE_KEY || '';
+
+    // Inicialização direta do cliente Supabase
     let _supabase = null;
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    } else {
+      console.error("Atenção: SUPABASE_URL ou SUPABASE_KEY não configurados no config.js!");
+    }
 
     // Sessão do Usuário (em memória/sessionStorage)
     let currentUser = JSON.parse(sessionStorage.getItem('bolo_pote_user')) || null;
 
-    // Cache local dos dados carregados do banco de dados na nuvem
+    // Cache local dos dados
     let db = {
       flavors: [],
       sales: [],
       orders: []
     };
-
-    // =========================================================================
-    // 1. LEITURA E PROCESSAMENTO DINÂMICO DO ARQUIVO .ENV
-    // =========================================================================
-    async function loadEnvAndInitSupabase() {
-      try {
-        const response = await fetch('.env');
-        if (!response.ok) {
-          throw new Error("Arquivo .env não encontrado na raiz do projeto!");
-        }
-
-        const text = await response.text();
-        const env = {};
-
-        // Mapeia chave=valor do arquivo .env
-        text.split('\n').forEach(line => {
-          const cleanLine = line.trim();
-          if (cleanLine && !cleanLine.startsWith('#')) {
-            const [key, ...value] = cleanLine.split('=');
-            if (key && value) {
-              env[key.trim()] = value.join('=').trim();
-            }
-          }
-        });
-
-        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
-          throw new Error("Credenciais do Supabase ausentes no arquivo .env!");
-        }
-
-        // Inicializa o cliente do Supabase com os dados do .env
-        _supabase = supabase.createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
-      } catch (err) {
-        console.error("Erro ao carregar .env:", err);
-        alert("Erro ao carregar o arquivo .env! Verifique se ele está no mesmo diretório e se você está executando em um servidor (ex: Live Server).");
-      }
-    }
 
     // =========================================================================
     // 2. BUSCAR DADOS DO SUPABASE
@@ -442,11 +418,6 @@
     }
 
     async function initApp() {
-      // Carrega o arquivo .env se ainda não tiver inicializado
-      if (!_supabase) {
-        await loadEnvAndInitSupabase();
-      }
-
       const loginView = document.getElementById('view-login');
       const appContent = document.getElementById('app-content');
       const tabAdminBtn = document.getElementById('tab-admin');
@@ -470,10 +441,8 @@
         switchTab('client');
       }
 
-      // Busca os dados atualizados na nuvem
-      if (_supabase) {
-        await loadDataFromSupabase();
-      }
+      // Busca os dados no Supabase
+      await loadDataFromSupabase();
     }
 
     function switchTab(tab) {
