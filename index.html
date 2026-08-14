@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão & Cardápio - Bolos no Pote</title>
+
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- ========================================================= -->
+  <!-- 1. BIBLIOTECA OFICIAL DO SUPABASE                         -->
+  <!-- ========================================================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-pink-50 min-h-screen text-gray-800 font-sans">
+
+  <!-- ================= TELA DE LOGIN ================= -->
+  <section id="view-login" class="flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-pink-100">
+      <div class="text-center mb-6">
+        <div class="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-cake-candles text-pink-600 text-3xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800">Doces Delícias</h2>
+        <p class="text-sm text-gray-500 mt-1">Acesse o sistema para continuar</p>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Usuário</label>
+          <input type="text" id="login-user" placeholder="Digite seu usuário" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Senha</label>
+          <input type="password" id="login-pass" placeholder="Digite sua senha" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          <p class="text-[11px] text-gray-400 mt-1">Clientes: senha de 1 a 8 caracteres.</p>
+        </div>
+
+        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg shadow-md transition text-sm">
+          Entrar no Sistema
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= APLICAÇÃO PRINCIPAL ================= -->
+  <div id="app-content" class="hidden">
+    
+    <!-- Header / Navigation -->
+    <header class="bg-pink-600 text-white shadow-lg sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-cake-candles text-2xl"></i>
+          <h1 class="text-2xl font-bold tracking-wide">Doces Delícias — Bolos no Pote</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Guias de Navegação -->
+          <div class="flex bg-pink-700 rounded-lg p-1">
+            <button onclick="switchTab('client')" id="tab-client" class="px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow">
+              <i class="fa-solid fa-store mr-1"></i> Cardápio
+            </button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600">
+              <i class="fa-solid fa-user-gear mr-1"></i> Painel do Dono
+            </button>
+          </div>
+
+          <!-- Usuário Logado e Logout -->
+          <div class="flex items-center gap-2 border-l border-pink-500 pl-3">
+            <span id="user-badge" class="text-xs bg-pink-800 px-2.5 py-1 rounded-full font-medium"></span>
+            <button onclick="handleLogout()" title="Sair" class="text-white hover:text-pink-200 p-1">
+              <i class="fa-solid fa-right-from-bracket text-lg"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+
+      <!-- ================= VISÃO DO CLIENTE ================= -->
+      <section id="view-client" class="space-y-8">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-pink-300 pb-2">Nosso Cardápio</h2>
+          <p class="text-sm text-gray-600 mt-1">Confira nossos sabores disponíveis hoje ou faça uma encomenda personalizada!</p>
+        </div>
+
+        <!-- Cardápio Grid -->
+        <div id="client-menu-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+        <!-- Formulário de Encomenda Multi-Sabores -->
+        <div class="bg-white p-6 rounded-xl shadow-md border border-pink-100 max-w-2xl mx-auto mt-10">
+          <h3 class="text-xl font-bold text-pink-700 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-check"></i> Faça sua Encomenda
+          </h3>
+          <form id="form-client-order" onsubmit="handleClientOrder(event)" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Seu Nome</label>
+                <input type="text" id="cli-name" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1">Seu WhatsApp</label>
+                <input type="tel" id="cli-phone" placeholder="(11) 99999-9999" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+              </div>
+            </div>
+
+            <!-- Seleção de Múltiplos Sabores -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">Escolha os Sabores e Quantidades</label>
+              <div id="cli-flavors-list" class="space-y-2 border rounded-lg p-3 bg-gray-50 max-h-60 overflow-y-auto"></div>
+              
+              <!-- Total Calculado Dinamicamente -->
+              <div class="mt-3 flex justify-between items-center p-3 bg-pink-100/60 rounded-lg">
+                <span class="font-bold text-gray-700 text-sm">Valor Total do Pedido:</span>
+                <span id="cli-total-price" class="text-xl font-black text-pink-700">R$ 0,00</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">Data de Entrega / Retirada</label>
+              <input type="date" id="cli-date" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
+              <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Encomenda pelo WhatsApp
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= PAINEL DO DONO (ADMIN) ================= -->
+      <section id="view-admin" class="hidden space-y-8">
+        
+        <!-- Dashboard Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
+            <p class="text-xs uppercase text-gray-500 font-bold">Faturamento Total (Vendas)</p>
+            <h3 id="dash-revenue" class="text-2xl font-black text-gray-800 mt-1">R$ 0,00</h3>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-pink-500">
+            <p class="text-xs uppercase text-gray-500 font-bold">Total de Potes Vendidos</p>
+            <h3 id="dash-sold" class="text-2xl font-black text-gray-800 mt-1">0 un</h3>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
+            <p class="text-xs uppercase text-gray-500 font-bold">Estoque Total Restante</p>
+            <h3 id="dash-stock" class="text-2xl font-black text-gray-800 mt-1">0 un</h3>
+          </div>
+        </div>
+
+        <!-- Formulários Operacionais -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Cadastrar Novo Produto -->
+          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-pink-600">
+            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-folder-plus text-pink-600"></i> Cadastrar Novo Produto
+            </h3>
+            <form onsubmit="handleCreateProduct(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600">Sabor do Bolo</label>
+                <input type="text" id="new-prod-name" placeholder="Ex: Brigadeiro Belga" required class="w-full border rounded p-2 text-sm">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600">Preço (R$)</label>
+                  <input type="number" step="0.01" id="new-prod-price" placeholder="12.00" required class="w-full border rounded p-2 text-sm">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600">Estoque Inicial</label>
+                  <input type="number" id="new-prod-stock" min="0" value="10" required class="w-full border rounded p-2 text-sm">
+                </div>
+              </div>
+              <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded text-sm transition">
+                Cadastrar Produto
+              </button>
+            </form>
+          </div>
+
+          <!-- Registrar Venda Pronta-Entrega -->
+          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-blue-600">
+            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-cart-shopping text-blue-600"></i> Registrar Venda
+            </h3>
+            <form onsubmit="handleDirectSale(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600">Cliente</label>
+                <input type="text" id="sale-client" required class="w-full border rounded p-2 text-sm">
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600">Sabor</label>
+                  <select id="sale-flavor" class="w-full border rounded p-2 text-sm"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600">Quantidade</label>
+                  <input type="number" id="sale-qty" min="1" value="1" required class="w-full border rounded p-2 text-sm">
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600">Pagamento</label>
+                <select id="sale-pay" class="w-full border rounded p-2 text-sm">
+                  <option value="Pix">Pix</option>
+                  <option value="Cartão">Cartão</option>
+                  <option value="Dinheiro">Dinheiro</option>
+                </select>
+              </div>
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-sm transition">
+                Registrar & Abater Estoque
+              </button>
+            </form>
+          </div>
+
+          <!-- Adicionar Produção ao Estoque -->
+          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-green-600">
+            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-plus-circle text-green-600"></i> Adicionar Produção
+            </h3>
+            <form onsubmit="handleAddStock(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-600">Sabor</label>
+                <select id="add-stock-flavor" class="w-full border rounded p-2 text-sm"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-600">Quantidade Produzida</label>
+                <input type="number" id="add-stock-qty" min="1" value="10" required class="w-full border rounded p-2 text-sm">
+              </div>
+              <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded text-sm transition">
+                Adicionar ao Estoque
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Tabela 1: Controle de Estoque -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-4 bg-gray-50 border-b">
+            <h3 class="font-bold text-gray-700">1. Controle de Estoque</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Sabor do Bolo</th>
+                  <th class="p-3 text-center">Quantidade</th>
+                  <th class="p-3">Preço Unitário</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-stock-body" class="divide-y"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabela 2: Registro de Vendas -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-4 bg-gray-50 border-b">
+            <h3 class="font-bold text-gray-700">2. Histórico de Vendas (Pronta-Entrega)</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Data</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Sabor</th>
+                  <th class="p-3 text-center">Qtd</th>
+                  <th class="p-3">Total (R$)</th>
+                  <th class="p-3">Pagamento</th>
+                  <th class="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-sales-body" class="divide-y"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabela 3: Agendamento de Encomendas -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-4 bg-gray-50 border-b">
+            <h3 class="font-bold text-gray-700">3. Agendamento de Encomendas</h3>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                <tr>
+                  <th class="p-3">Entrega</th>
+                  <th class="p-3">Cliente</th>
+                  <th class="p-3">Contato</th>
+                  <th class="p-3">Detalhes</th>
+                  <th class="p-3">Total</th>
+                  <th class="p-3">Sinal</th>
+                  <th class="p-3">Restante</th>
+                  <th class="p-3">Status</th>
+                  <th class="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="table-orders-body" class="divide-y"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL EDITAR PRODUTO ================= -->
+  <div id="modal-edit-product" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-bold text-gray-800 text-lg">Editar Produto</h3>
+        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <form onsubmit="handleSaveEditProduct(event)" class="space-y-3">
+        <input type="hidden" id="edit-prod-id">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Sabor do Bolo</label>
+          <input type="text" id="edit-prod-name" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Preço (R$)</label>
+            <input type="number" step="0.01" id="edit-prod-price" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label>
+            <input type="number" id="edit-prod-stock" min="0" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-semibold transition">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-semibold transition">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SHOP_WHATSAPP = "5517992173518";
+
+    // =========================================================================
+    // 2. DIGITE SEUS DADOS DO SUPABASE NAS LINHAS ABAIXO
+    // =========================================================================
+    const SUPABASE_URL = "https://xijwjeknpvndxmpbmyim.supabase.co"; // <-- Cole sua URL aqui
+    const SUPABASE_KEY = "sb_publishable_H1S82bBgso3qsfQ1vhtr1A_vaX-GWrW";     // <-- Cole sua Chave anon aqui
+    
+    // Inicialização do cliente Supabase
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Sessão do Usuário (em memória/sessionStorage)
+    let currentUser = JSON.parse(sessionStorage.getItem('bolo_pote_user')) || null;
+
+    // Cache local dos dados carregados do banco de dados na nuvem
+    let db = {
+      flavors: [],
+      sales: [],
+      orders: []
+    };
+
+    // =========================================================================
+    // 3. FUNÇÃO PARA CARREGAR OS DADOS DO SUPABASE
+    // =========================================================================
+    async function loadDataFromSupabase() {
+      try {
+        const { data: flavors, error: errF } = await _supabase.from('flavors').select('*').order('id', { ascending: true });
+        const { data: sales, error: errS } = await _supabase.from('sales').select('*').order('id', { ascending: false });
+        const { data: orders, error: errO } = await _supabase.from('orders').select('*').order('id', { ascending: false });
+
+        if (errF || errS || errO) {
+          console.error("Erro ao sincronizar com banco de dados:", errF || errS || errO);
+        }
+
+        db.flavors = flavors || [];
+        db.sales = sales || [];
+        db.orders = orders || [];
+
+        renderAll();
+      } catch (err) {
+        console.error("Erro inesperado de conexão:", err);
+      }
+    }
+
+    // Autenticação básica de interface
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value.trim();
+      const pass = document.getElementById('login-pass').value;
+
+      if (user === 'MiguelFerreira' && pass === 'Rm2759@@') {
+        currentUser = { name: 'Miguel Ferreira', role: 'admin' };
+      } else if (user.length > 0 && pass.length >= 1 && pass.length <= 8) {
+        currentUser = { name: user, role: 'client' };
+      } else {
+        alert('Dados incorretos! Para clientes, a senha deve conter entre 1 e 8 caracteres.');
+        return;
+      }
+
+      sessionStorage.setItem('bolo_pote_user', JSON.stringify(currentUser));
+      initApp();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      sessionStorage.removeItem('bolo_pote_user');
+      initApp();
+    }
+
+    async function initApp() {
+      const loginView = document.getElementById('view-login');
+      const appContent = document.getElementById('app-content');
+      const tabAdminBtn = document.getElementById('tab-admin');
+      const userBadge = document.getElementById('user-badge');
+
+      if (!currentUser) {
+        loginView.classList.remove('hidden');
+        appContent.classList.add('hidden');
+        return;
+      }
+
+      loginView.classList.add('hidden');
+      appContent.classList.remove('hidden');
+      userBadge.innerText = `${currentUser.name} (${currentUser.role === 'admin' ? 'Dono' : 'Cliente'})`;
+
+      if (currentUser.role === 'admin') {
+        tabAdminBtn.classList.remove('hidden');
+        switchTab('admin');
+      } else {
+        tabAdminBtn.classList.add('hidden');
+        switchTab('client');
+      }
+
+      // Busca os dados atualizados na nuvem
+      await loadDataFromSupabase();
+    }
+
+    function switchTab(tab) {
+      if (tab === 'admin' && currentUser?.role !== 'admin') return;
+
+      document.getElementById('view-client').classList.toggle('hidden', tab !== 'client');
+      document.getElementById('view-admin').classList.toggle('hidden', tab !== 'admin');
+      
+      const btnClient = document.getElementById('tab-client');
+      const btnAdmin = document.getElementById('tab-admin');
+
+      if (tab === 'client') {
+        btnClient.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow";
+        btnAdmin.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600";
+      } else {
+        btnAdmin.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow";
+        btnClient.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600";
+      }
+    }
+
+    function getStatusBadge(stock) {
+      if (stock === 0) return `<span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold">Esgotado</span>`;
+      if (stock <= 3) return `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold">Últimas Unidades</span>`;
+      return `<span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold">Disponível</span>`;
+    }
+
+    function renderAll() {
+      renderClientView();
+      if (currentUser?.role === 'admin') {
+        renderAdminView();
+      }
+    }
+
+    function renderClientView() {
+      const grid = document.getElementById('client-menu-grid');
+      const flavorsList = document.getElementById('cli-flavors-list');
+      
+      grid.innerHTML = '';
+      flavorsList.innerHTML = '';
+
+      db.flavors.forEach(f => {
+        grid.innerHTML += `
+          <div class="bg-white p-5 rounded-xl shadow-sm border border-pink-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-lg text-gray-800">${f.name}</h3>
+                ${getStatusBadge(f.stock)}
+              </div>
+              <p class="text-2xl font-black text-pink-600 mb-2">R$ ${Number(f.price).toFixed(2)}</p>
+            </div>
+            <p class="text-xs text-gray-500">Estoque disponível: ${f.stock} potes</p>
+          </div>
+        `;
+
+        flavorsList.innerHTML += `
+          <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-gray-200">
+            <div>
+              <p class="font-bold text-sm text-gray-800">${f.name}</p>
+              <p class="text-xs text-pink-600 font-semibold">R$ ${Number(f.price).toFixed(2)} cada</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="changeFlavorQty(${f.id}, -1)" class="w-8 h-8 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition">-</button>
+              <input type="number" id="flavor-qty-${f.id}" value="0" min="0" readonly class="w-10 text-center bg-gray-50 border rounded-md p-1 text-sm font-bold text-gray-800">
+              <button type="button" onclick="changeFlavorQty(${f.id}, 1)" class="w-8 h-8 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      updateClientOrderTotal();
+    }
+
+    function changeFlavorQty(flavorId, delta) {
+      const input = document.getElementById(`flavor-qty-${flavorId}`);
+      if (!input) return;
+
+      let current = parseInt(input.value) || 0;
+      let newQty = current + delta;
+      if (newQty < 0) newQty = 0;
+
+      input.value = newQty;
+      updateClientOrderTotal();
+    }
+
+    function updateClientOrderTotal() {
+      let total = 0;
+      db.flavors.forEach(f => {
+        const input = document.getElementById(`flavor-qty-${f.id}`);
+        if (input) {
+          const qty = parseInt(input.value) || 0;
+          total += qty * Number(f.price);
+        }
+      });
+      document.getElementById('cli-total-price').innerText = `R$ ${total.toFixed(2)}`;
+    }
+
+    function renderAdminView() {
+      const saleSelect = document.getElementById('sale-flavor');
+      const addStockSelect = document.getElementById('add-stock-flavor');
+      saleSelect.innerHTML = '';
+      addStockSelect.innerHTML = '';
+
+      db.flavors.forEach(f => {
+        saleSelect.innerHTML += `<option value="${f.id}">${f.name} (Disp: ${f.stock})</option>`;
+        addStockSelect.innerHTML += `<option value="${f.id}">${f.name}</option>`;
+      });
+
+      // Tabela Estoque
+      const stockBody = document.getElementById('table-stock-body');
+      stockBody.innerHTML = db.flavors.length ? '' : `<tr><td colspan="5" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>`;
+      db.flavors.forEach(f => {
+        stockBody.innerHTML += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 font-medium">${f.name}</td>
+            <td class="p-3 text-center font-bold">${f.stock}</td>
+            <td class="p-3">R$ ${Number(f.price).toFixed(2)}</td>
+            <td class="p-3">${getStatusBadge(f.stock)}</td>
+            <td class="p-3 text-center space-x-2">
+              <button onclick="openEditModal(${f.id})" class="text-blue-600 hover:text-blue-800 p-1" title="Editar Produto">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteFlavor(${f.id})" class="text-red-600 hover:text-red-800 p-1" title="Excluir Produto">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Tabela Vendas
+      const salesBody = document.getElementById('table-sales-body');
+      salesBody.innerHTML = db.sales.length ? '' : `<tr><td colspan="7" class="p-4 text-center text-gray-400">Nenhuma venda registrada.</td></tr>`;
+      db.sales.forEach((s) => {
+        salesBody.innerHTML += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 text-xs text-gray-500">${s.date}</td>
+            <td class="p-3 font-medium">${s.client}</td>
+            <td class="p-3">${s.flavor}</td>
+            <td class="p-3 text-center font-bold">${s.qty}</td>
+            <td class="p-3 font-bold text-green-700">R$ ${Number(s.total).toFixed(2)}</td>
+            <td class="p-3"><span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">${s.payment}</span></td>
+            <td class="p-3 text-center">
+              <button onclick="deleteSale(${s.id})" class="text-red-600 hover:text-red-800 p-1" title="Cancelar/Excluir Venda">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Tabela Encomendas
+      const ordersBody = document.getElementById('table-orders-body');
+      ordersBody.innerHTML = db.orders.length ? '' : `<tr><td colspan="9" class="p-4 text-center text-gray-400">Nenhuma encomenda agendada.</td></tr>`;
+      db.orders.forEach((o) => {
+        const deposit = Number(o.deposit || 0);
+        const total = Number(o.total || 0);
+        ordersBody.innerHTML += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-3 font-medium text-pink-700">${o.deliveryDate}</td>
+            <td class="p-3">${o.client}</td>
+            <td class="p-3">${o.phone}</td>
+            <td class="p-3">${o.details}</td>
+            <td class="p-3 font-bold">R$ ${total.toFixed(2)}</td>
+            <td class="p-3 text-green-600">R$ ${deposit.toFixed(2)}</td>
+            <td class="p-3 text-red-500 font-bold">R$ ${(total - deposit).toFixed(2)}</td>
+            <td class="p-3">
+              <select onchange="updateOrderStatus(${o.id}, this.value)" class="text-xs border rounded p-1 bg-white">
+                <option value="Aguardando Sinal" ${o.status === 'Aguardando Sinal' ? 'selected' : ''}>Aguardando Sinal</option>
+                <option value="Em Produção" ${o.status === 'Em Produção' ? 'selected' : ''}>Em Produção</option>
+                <option value="Pronto" ${o.status === 'Pronto' ? 'selected' : ''}>Pronto</option>
+                <option value="Entregue" ${o.status === 'Entregue' ? 'selected' : ''}>Entregue</option>
+              </select>
+            </td>
+            <td class="p-3 text-center">
+              <button onclick="deleteOrder(${o.id})" class="text-red-600 hover:text-red-800 p-1" title="Excluir Encomenda">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Dashboard
+      const totalRev = db.sales.reduce((acc, curr) => acc + Number(curr.total || 0), 0);
+      const totalSold = db.sales.reduce((acc, curr) => acc + Number(curr.qty || 0), 0);
+      const totalStock = db.flavors.reduce((acc, curr) => acc + Number(curr.stock || 0), 0);
+
+      document.getElementById('dash-revenue').innerText = `R$ ${totalRev.toFixed(2)}`;
+      document.getElementById('dash-sold').innerText = `${totalSold} un`;
+      document.getElementById('dash-stock').innerText = `${totalStock} un`;
+    }
+
+    // =========================================================================
+    // 4. OPERAÇÕES COM BANCO DE DADOS (SUPABASE CRUD)
+    // =========================================================================
+
+    // A. Cadastrar Novo Produto
+    async function handleCreateProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-prod-name').value.trim();
+      const price = parseFloat(document.getElementById('new-prod-price').value);
+      const stock = parseInt(document.getElementById('new-prod-stock').value);
+
+      const { error } = await _supabase.from('flavors').insert([{ name, price, stock }]);
+
+      if (error) {
+        alert("Erro ao cadastrar produto: " + error.message);
+        return;
+      }
+
+      await loadDataFromSupabase();
+      e.target.reset();
+      alert(`Sabor "${name}" cadastrado no banco de dados!`);
+    }
+
+    // B. Modal e Edição de Produto
+    function openEditModal(flavorId) {
+      const flavor = db.flavors.find(f => f.id === flavorId);
+      if (!flavor) return;
+
+      document.getElementById('edit-prod-id').value = flavor.id;
+      document.getElementById('edit-prod-name').value = flavor.name;
+      document.getElementById('edit-prod-price').value = flavor.price;
+      document.getElementById('edit-prod-stock').value = flavor.stock;
+
+      document.getElementById('modal-edit-product').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('modal-edit-product').classList.add('hidden');
+    }
+
+    async function handleSaveEditProduct(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('edit-prod-id').value);
+      const name = document.getElementById('edit-prod-name').value.trim();
+      const price = parseFloat(document.getElementById('edit-prod-price').value);
+      const stock = parseInt(document.getElementById('edit-prod-stock').value);
+
+      const { error } = await _supabase
+        .from('flavors')
+        .update({ name, price, stock })
+        .eq('id', id);
+
+      if (error) {
+        alert("Erro ao editar produto: " + error.message);
+        return;
+      }
+
+      await loadDataFromSupabase();
+      closeEditModal();
+    }
+
+    // C. Excluir Produto
+    async function deleteFlavor(flavorId) {
+      const flavor = db.flavors.find(f => f.id === flavorId);
+      if (!flavor) return;
+
+      if (confirm(`Tem certeza que deseja excluir o produto "${flavor.name}"?`)) {
+        const { error } = await _supabase.from('flavors').delete().eq('id', flavorId);
+        if (error) {
+          alert("Erro ao excluir produto: " + error.message);
+          return;
+        }
+        await loadDataFromSupabase();
+      }
+    }
+
+    // D. Registrar Venda Direta
+    async function handleDirectSale(e) {
+      e.preventDefault();
+      const flavorId = parseInt(document.getElementById('sale-flavor').value);
+      const qty = parseInt(document.getElementById('sale-qty').value);
+      const client = document.getElementById('sale-client').value;
+      const payment = document.getElementById('sale-pay').value;
+
+      const flavor = db.flavors.find(f => f.id === flavorId);
+      if (!flavor) return;
+
+      if (flavor.stock < qty) {
+        alert("Quantidade em estoque insuficiente!");
+        return;
+      }
+
+      // 1. Atualizar o estoque no Supabase
+      const { error: errStock } = await _supabase
+        .from('flavors')
+        .update({ stock: flavor.stock - qty })
+        .eq('id', flavorId);
+
+      if (errStock) {
+        alert("Erro ao abater estoque: " + errStock.message);
+        return;
+      }
+
+      // 2. Gravar a venda no Supabase
+      const { error: errSale } = await _supabase.from('sales').insert([{
+        date: new Date().toLocaleDateString('pt-BR'),
+        client: client,
+        flavor: flavor.name,
+        qty: qty,
+        total: flavor.price * qty,
+        payment: payment
+      }]);
+
+      if (errSale) {
+        alert("Erro ao registrar venda: " + errSale.message);
+        return;
+      }
+
+      await loadDataFromSupabase();
+      e.target.reset();
+    }
+
+    // E. Cancelar/Excluir Venda
+    async function deleteSale(saleId) {
+      const sale = db.sales.find(s => s.id === saleId);
+      if (!sale) return;
+
+      if (confirm(`Deseja realmente cancelar/excluir a venda do cliente "${sale.client}"?`)) {
+        const restoreStock = confirm(`Deseja devolver os ${sale.qty} potes de "${sale.flavor}" de volta ao estoque?`);
+        
+        if (restoreStock) {
+          const flavor = db.flavors.find(f => f.name === sale.flavor);
+          if (flavor) {
+            await _supabase.from('flavors').update({ stock: flavor.stock + sale.qty }).eq('id', flavor.id);
+          }
+        }
+
+        const { error } = await _supabase.from('sales').delete().eq('id', saleId);
+        if (error) {
+          alert("Erro ao cancelar venda: " + error.message);
+          return;
+        }
+
+        await loadDataFromSupabase();
+      }
+    }
+
+    // F. Adicionar Produção (Aumentar Estoque)
+    async function handleAddStock(e) {
+      e.preventDefault();
+      const flavorId = parseInt(document.getElementById('add-stock-flavor').value);
+      const qty = parseInt(document.getElementById('add-stock-qty').value);
+
+      const flavor = db.flavors.find(f => f.id === flavorId);
+      if (!flavor) return;
+
+      const { error } = await _supabase
+        .from('flavors')
+        .update({ stock: flavor.stock + qty })
+        .eq('id', flavorId);
+
+      if (error) {
+        alert("Erro ao adicionar estoque: " + error.message);
+        return;
+      }
+
+      await loadDataFromSupabase();
+      e.target.reset();
+    }
+
+    // G. Criar Encomenda
+    async function handleClientOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('cli-name').value.trim();
+      const phone = document.getElementById('cli-phone').value.trim();
+      const date = document.getElementById('cli-date').value;
+
+      let selectedItems = [];
+      let total = 0;
+
+      db.flavors.forEach(f => {
+        const input = document.getElementById(`flavor-qty-${f.id}`);
+        if (input) {
+          const qty = parseInt(input.value) || 0;
+          if (qty > 0) {
+            const itemTotal = qty * Number(f.price);
+            selectedItems.push({
+              name: f.name,
+              qty: qty,
+              price: f.price,
+              total: itemTotal
+            });
+            total += itemTotal;
+          }
+        }
+      });
+
+      if (selectedItems.length === 0) {
+        alert("Por favor, selecione pelo menos 1 pote de bolo para realizar a encomenda.");
+        return;
+      }
+
+      const detailsStr = selectedItems.map(i => `${i.qty}x ${i.name}`).join(', ');
+
+      // Salva a encomenda no Supabase
+      const { error } = await _supabase.from('orders').insert([{
+        deliveryDate: date,
+        client: name,
+        phone: phone,
+        details: detailsStr,
+        total: total,
+        deposit: 0,
+        status: "Aguardando Sinal"
+      }]);
+
+      if (error) {
+        alert("Erro ao registrar encomenda: " + error.message);
+        return;
+      }
+
+      await loadDataFromSupabase();
+
+      // Redireciona para o WhatsApp
+      const itemsFormatted = selectedItems.map(i => `%0A• *${i.qty}x* ${i.name} (R$ ${i.total.toFixed(2)})`).join('');
+      const text = `Olá! Gostaria de fazer uma encomenda:%0A*Cliente:* ${name}%0A*Data de Entrega:* ${date}%0A%0A*Itens Solicitados:*${itemsFormatted}%0A%0A*Valor Total:* R$ ${total.toFixed(2)}`;
+
+      window.open(`https://wa.me/${SHOP_WHATSAPP}?text=${text}`, '_blank');
+      
+      e.target.reset();
+      renderClientView();
+    }
+
+    // H. Excluir Encomenda
+    async function deleteOrder(orderId) {
+      const order = db.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      if (confirm(`Deseja cancelar e excluir a encomenda do cliente "${order.client}"?`)) {
+        const { error } = await _supabase.from('orders').delete().eq('id', orderId);
+        if (error) {
+          alert("Erro ao excluir encomenda: " + error.message);
+          return;
+        }
+        await loadDataFromSupabase();
+      }
+    }
+
+    // I. Atualizar Status da Encomenda
+    async function updateOrderStatus(orderId, newStatus) {
+      const { error } = await _supabase
+        .from('orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
+
+      if (error) {
+        alert("Erro ao atualizar status: " + error.message);
+        return;
+      }
+      await loadDataFromSupabase();
+    }
+
+    // Inicializar Sistema ao carregar a página
+    initApp();
+  </script>
+</body>
+</html>
