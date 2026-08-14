@@ -1,0 +1,2 @@
+window.env = {SUPABASE_URL = "https://xijwjeknpvndxmpbmyim.supabase.co", 
+SUPABASE_KEY = "sb_publishable_H1S82bBgso3qsfQ1vhtr1A_vaX-GWrW"    };
