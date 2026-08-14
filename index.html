@@ -9,9 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <!-- ========================================================= -->
-  <!-- 1. BIBLIOTECA OFICIAL DO SUPABASE                         -->
-  <!-- ========================================================= -->
+  <!-- SDK Oficial do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-pink-50 min-h-screen text-gray-800 font-sans">
@@ -342,16 +340,10 @@
   </div>
 
   <script>
-    const SHOP_WHATSAPP = "5517992173518";
+    const SHOP_WHATSAPP = "5511999999999";
 
-    // =========================================================================
-    // 2. DIGITE SEUS DADOS DO SUPABASE NAS LINHAS ABAIXO
-    // =========================================================================
-    const SUPABASE_URL = "https://xijwjeknpvndxmpbmyim.supabase.co"; // <-- Cole sua URL aqui
-    const SUPABASE_KEY = "sb_publishable_H1S82bBgso3qsfQ1vhtr1A_vaX-GWrW";     // <-- Cole sua Chave anon aqui
-    
-    // Inicialização do cliente Supabase
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Instância global do Supabase (será criada a partir do arquivo .env)
+    let _supabase = null;
 
     // Sessão do Usuário (em memória/sessionStorage)
     let currentUser = JSON.parse(sessionStorage.getItem('bolo_pote_user')) || null;
@@ -364,9 +356,46 @@
     };
 
     // =========================================================================
-    // 3. FUNÇÃO PARA CARREGAR OS DADOS DO SUPABASE
+    // 1. LEITURA E PROCESSAMENTO DINÂMICO DO ARQUIVO .ENV
+    // =========================================================================
+    async function loadEnvAndInitSupabase() {
+      try {
+        const response = await fetch('.env');
+        if (!response.ok) {
+          throw new Error("Arquivo .env não encontrado na raiz do projeto!");
+        }
+
+        const text = await response.text();
+        const env = {};
+
+        // Mapeia chave=valor do arquivo .env
+        text.split('\n').forEach(line => {
+          const cleanLine = line.trim();
+          if (cleanLine && !cleanLine.startsWith('#')) {
+            const [key, ...value] = cleanLine.split('=');
+            if (key && value) {
+              env[key.trim()] = value.join('=').trim();
+            }
+          }
+        });
+
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          throw new Error("Credenciais do Supabase ausentes no arquivo .env!");
+        }
+
+        // Inicializa o cliente do Supabase com os dados do .env
+        _supabase = supabase.createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
+      } catch (err) {
+        console.error("Erro ao carregar .env:", err);
+        alert("Erro ao carregar o arquivo .env! Verifique se ele está no mesmo diretório e se você está executando em um servidor (ex: Live Server).");
+      }
+    }
+
+    // =========================================================================
+    // 2. BUSCAR DADOS DO SUPABASE
     // =========================================================================
     async function loadDataFromSupabase() {
+      if (!_supabase) return;
       try {
         const { data: flavors, error: errF } = await _supabase.from('flavors').select('*').order('id', { ascending: true });
         const { data: sales, error: errS } = await _supabase.from('sales').select('*').order('id', { ascending: false });
@@ -382,7 +411,7 @@
 
         renderAll();
       } catch (err) {
-        console.error("Erro inesperado de conexão:", err);
+        console.error("Erro inesperado ao carregar dados:", err);
       }
     }
 
@@ -412,6 +441,11 @@
     }
 
     async function initApp() {
+      // Carrega o arquivo .env se ainda não tiver inicializado
+      if (!_supabase) {
+        await loadEnvAndInitSupabase();
+      }
+
       const loginView = document.getElementById('view-login');
       const appContent = document.getElementById('app-content');
       const tabAdminBtn = document.getElementById('tab-admin');
@@ -436,7 +470,9 @@
       }
 
       // Busca os dados atualizados na nuvem
-      await loadDataFromSupabase();
+      if (_supabase) {
+        await loadDataFromSupabase();
+      }
     }
 
     function switchTab(tab) {
@@ -630,7 +666,7 @@
     }
 
     // =========================================================================
-    // 4. OPERAÇÕES COM BANCO DE DADOS (SUPABASE CRUD)
+    // 3. OPERAÇÕES COM BANCO DE DADOS (SUPABASE CRUD)
     // =========================================================================
 
     // A. Cadastrar Novo Produto
