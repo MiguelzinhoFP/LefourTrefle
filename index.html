@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lê Four Treflê - Gestão & Cardápio</title>
 
-  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display para alta legibilidade -->
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,13 +17,10 @@
   <!-- SDK Oficial do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- CARREGAMENTO DO CONFIG.JS (Substitui a leitura do .env) -->
+  <!-- CARREGAMENTO DO CONFIG.JS -->
   <script src="config.js"></script>
 
   <style>
-    /* =========================================================
-       Sistema de Design: Lê Four Treflê (Tonalidades & Tipografia)
-       ========================================================= */
     :root {
       --verde-fundo-sage:     #C3CA9F;
       --verde-fundo-suave:    #D5DCB8;
@@ -41,11 +38,9 @@
       --font-serif: 'Playfair Display', Georgia, serif;
       --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
 
-      /* Leve arredondamento suave (nem reto, nem cilíndrico) */
       --radius: 10px;
     }
 
-    /* Reset & Base Styling */
     *, *::before, *::after {
       box-sizing: border-box;
     }
@@ -66,7 +61,6 @@
       letter-spacing: -0.01em;
     }
 
-    /* Barra Superior Dourada */
     body::before {
       content: '';
       display: block;
@@ -78,7 +72,6 @@
       z-index: 60;
     }
 
-    /* Sobrescrita Estrutural de Cards e Conteiners */
     .bg-white, .bg-pink-50, .bg-gray-50 {
       background-color: var(--verde-card-fundo) !important;
     }
@@ -95,7 +88,6 @@
       box-shadow: 0 4px 18px -2px rgba(45, 62, 33, 0.08) !important;
     }
 
-    /* Cabeçalho */
     header {
       background: var(--verde-fundo-sage) !important;
       border-bottom: 1px solid var(--dourado-logo) !important;
@@ -116,7 +108,6 @@
       }
     }
 
-    /* Navegação e Abas */
     .bg-pink-700 {
       background-color: transparent !important;
     }
@@ -146,7 +137,6 @@
       border-color: var(--dourado-hover) !important;
     }
 
-    /* Crachá de Usuário Logado */
     #user-badge {
       background-color: var(--verde-oliva-escuro) !important;
       color: var(--dourado-logo) !important;
@@ -159,7 +149,6 @@
       border-color: var(--dourado-logo) !important;
     }
 
-    /* Cores de Texto Utilitárias */
     .text-pink-600, .text-pink-700, .text-pink-800, .text-gray-800, .text-gray-700 {
       color: var(--verde-oliva-escuro) !important;
     }
@@ -172,8 +161,7 @@
       border-color: var(--dourado-logo) !important;
     }
 
-    /* Formulários e Inputs Modernizados */
-    input:not([type="hidden"]), select, textarea {
+    input:not([type="hidden"]):not([type="file"]), select, textarea {
       background-color: #FFFFFF !important;
       border: 1px solid var(--dourado-logo) !important;
       color: var(--texto-escuro) !important;
@@ -191,7 +179,6 @@
       box-shadow: 0 0 0 2px rgba(45, 62, 33, 0.15) !important;
     }
 
-    /* Oculta spinners de inputs numéricos */
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
       -webkit-appearance: none; 
@@ -201,7 +188,19 @@
       -moz-appearance: textfield;
     }
 
-    /* Botões Gerais de Ação */
+    /* ESTILIZAÇÃO DO DRAG & DROP DE IMAGENS */
+    .drop-zone {
+      border: 2px dashed var(--dourado-logo) !important;
+      background-color: #FFFFFF !important;
+      border-radius: var(--radius) !important;
+      transition: all 0.2s ease-in-out !important;
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      background-color: var(--verde-fundo-suave) !important;
+      border-color: var(--verde-oliva-escuro) !important;
+    }
+
     button[type="submit"], 
     button.bg-pink-600, 
     button.bg-green-600, 
@@ -232,7 +231,6 @@
       transform: translateY(-1px);
     }
 
-    /* Botões de Incremento / Decremento */
     button.bg-pink-100 {
       background-color: var(--verde-fundo-suave) !important;
       color: var(--verde-oliva-escuro) !important;
@@ -252,7 +250,6 @@
       border: 1px solid var(--dourado-logo) !important;
     }
 
-    /* Indicadores do Dashboard */
     #view-admin > .grid > div {
       background: var(--verde-card-fundo) !important;
       border: 1px solid var(--dourado-logo) !important;
@@ -264,7 +261,6 @@
       transform: translateY(-2px);
     }
 
-    /* Tabelas Limpas */
     .bg-white.rounded-xl.shadow-md.overflow-hidden {
       border: 1px solid var(--dourado-logo) !important;
       border-radius: var(--radius) !important;
@@ -306,7 +302,6 @@
       padding: 12px 16px !important;
     }
 
-    /* Badges de Status */
     .bg-red-100 {
       background-color: #E6C2C2 !important;
       color: #5C1D1D !important;
@@ -328,7 +323,6 @@
       border-radius: var(--radius) !important;
     }
 
-    /* Modal de Edição */
     #modal-edit-product {
       background-color: rgba(36, 51, 26, 0.7) !important;
       backdrop-filter: blur(4px);
@@ -358,7 +352,6 @@
       color: #FFFFFF !important;
     }
 
-    /* Personalização de Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -381,8 +374,8 @@
   <section id="view-login" class="flex items-center justify-center min-h-[calc(100vh-4px)] px-4 py-8">
     <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-md border border-pink-100 transition-all duration-300">
       <div class="text-center mb-8">
-        <div class="bg-pink-100 w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-4 border border-[var(--dourado-logo)] shadow-inner">
-          <i class="fa-solid fa-cookie-bite text-pink-600 text-3xl sm:text-4xl"></i>
+        <div class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-[var(--dourado-logo)] shadow-md overflow-hidden bg-[var(--verde-card-fundo)]">
+          <img src="Logo.png" alt="Logo Lê Four Treflê" class="w-full h-full object-cover">
         </div>
         <h2 class="text-3xl font-bold text-gray-800 leading-tight">
           <span class="brand-serif">Lê Four Treflê</span>
@@ -399,13 +392,66 @@
         <div>
           <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Senha</label>
           <input type="password" id="login-pass" placeholder="Digite sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
-          <p class="text-[11px] text-gray-500 mt-1.5">Clientes: senha de 1 a 8 caracteres.</p>
         </div>
 
         <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-lg shadow-md transition text-xs sm:text-sm tracking-widest uppercase">
           Entrar no Sistema
         </button>
       </form>
+
+      <div class="mt-6 text-center border-t border-[var(--dourado-logo)]/40 pt-4">
+        <p class="text-xs text-gray-600">
+          Ainda não tem uma conta? 
+          <button type="button" onclick="showRegisterView()" class="font-bold text-[var(--verde-oliva-escuro)] hover:underline ml-1">
+            Cadastre-se aqui
+          </button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TELA DE CADASTRO ================= -->
+  <section id="view-register" class="hidden flex items-center justify-center min-h-[calc(100vh-4px)] px-4 py-8">
+    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-md border border-pink-100 transition-all duration-300">
+      <div class="text-center mb-6">
+        <div class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-[var(--dourado-logo)] shadow-md overflow-hidden bg-[var(--verde-card-fundo)]">
+          <img src="Logo.png" alt="Logo Lê Four Treflê" class="w-full h-full object-cover">
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 leading-tight">
+          <span class="brand-serif">Lê Four Treflê</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium">Crie sua conta para continuar</p>
+      </div>
+
+      <form onsubmit="handleRegister(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Nome de Usuário</label>
+          <input type="text" id="reg-user" placeholder="Digite um usuário" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Senha</label>
+          <input type="password" id="reg-pass" placeholder="Crie sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Confirmar Senha</label>
+          <input type="password" id="reg-pass-confirm" placeholder="Confirme sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+        </div>
+
+        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-lg shadow-md transition text-xs sm:text-sm tracking-widest uppercase mt-2">
+          Cadastrar e Entrar
+        </button>
+      </form>
+
+      <div class="mt-6 text-center border-t border-[var(--dourado-logo)]/40 pt-4">
+        <p class="text-xs text-gray-600">
+          Já possui uma conta? 
+          <button type="button" onclick="showLoginView()" class="font-bold text-[var(--verde-oliva-escuro)] hover:underline ml-1">
+            Faça login aqui
+          </button>
+        </p>
+      </div>
     </div>
   </section>
 
@@ -416,14 +462,13 @@
     <header class="bg-pink-600 text-white shadow-lg sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
         <div class="flex items-center gap-3 self-center sm:self-auto">
-          <i class="fa-solid fa-cookie-bite text-2xl sm:text-3xl" style="color: var(--dourado-escuro);"></i>
+          <img src="Logo.png" alt="Logo Lê Four Treflê" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[var(--dourado-logo)] shadow-md">
           <h1 class="text-xl sm:text-2xl font-bold tracking-wide flex items-center flex-wrap gap-1">
             <span class="brand-serif">Lê Four Treflê</span>
           </h1>
         </div>
 
         <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--dourado-logo)]/30">
-          <!-- Guias de Navegação -->
           <div class="flex bg-pink-700 rounded-lg p-0.5 sm:p-1 gap-1">
             <button type="button" onclick="switchTab('client')" id="tab-client" class="px-3 py-2 rounded-md font-semibold text-xs transition bg-white text-pink-700 shadow">
               <i class="fa-solid fa-store mr-1.5"></i> Cardápio
@@ -433,7 +478,6 @@
             </button>
           </div>
 
-          <!-- Usuário Logado e Logout -->
           <div class="flex items-center gap-2 border-l border-pink-500 pl-3">
             <span id="user-badge" class="text-[11px] sm:text-xs bg-pink-800 px-3 py-1.5 font-semibold"></span>
             <button type="button" onclick="handleLogout()" title="Sair" class="text-white hover:text-pink-200 p-2 rounded-md transition hover:bg-black/10 flex items-center justify-center">
@@ -446,17 +490,15 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-grow w-full">
 
-      <!-- ================= VISÃO DO CLIENTE ================= -->
+      <!-- VISÃO DO CLIENTE -->
       <section id="view-client" class="space-y-8 sm:space-y-12">
         <div class="border-b-2 border-pink-300 pb-3">
           <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Nosso Cardápio</h2>
           <p class="text-xs sm:text-sm text-gray-600 mt-1">Confira nossos doces disponíveis hoje ou faça uma encomenda personalizada!</p>
         </div>
 
-        <!-- Cardápio Grid -->
         <div id="client-menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
 
-        <!-- Formulário de Encomenda Multi-Sabores -->
         <div class="bg-white p-5 sm:p-8 rounded-xl shadow-md border border-pink-100 max-w-2xl mx-auto mt-8 sm:mt-12">
           <h3 class="text-xl sm:text-2xl font-bold text-pink-700 mb-6 flex items-center gap-2.5">
             <i class="fa-solid fa-calendar-check text-pink-600"></i> Faça sua Encomenda
@@ -473,12 +515,10 @@
               </div>
             </div>
 
-            <!-- Seleção de Múltiplos Sabores -->
             <div>
               <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Escolha os Sabores e Quantidades</label>
               <div id="cli-flavors-list" class="space-y-2.5 border rounded-lg p-3 sm:p-4 bg-gray-50 max-h-72 overflow-y-auto"></div>
               
-              <!-- Total Calculado Dinamicamente -->
               <div class="mt-4 flex flex-row justify-between items-center p-4 bg-pink-100/60 rounded-lg border border-[var(--dourado-logo)]/50">
                 <span class="font-bold text-gray-700 text-xs sm:text-sm uppercase tracking-wider">Valor Total do Pedido:</span>
                 <span id="cli-total-price" class="text-xl sm:text-2xl font-black text-pink-700">R$ 0,00</span>
@@ -497,10 +537,8 @@
         </div>
       </section>
 
-      <!-- ================= PAINEL DO DONO (ADMIN) ================= -->
+      <!-- PAINEL DO DONO (ADMIN) -->
       <section id="view-admin" class="hidden space-y-8 sm:space-y-10">
-        
-        <!-- Dashboard Resumo -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border-l-4 border-green-500 flex flex-col justify-between">
             <p class="text-xs uppercase text-gray-500 font-bold tracking-wider">Faturamento Total (Vendas)</p>
@@ -516,10 +554,7 @@
           </div>
         </div>
 
-        <!-- Formulários Operacionais -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          <!-- Cadastrar Novo Produto -->
           <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-pink-600 flex flex-col justify-between">
             <div>
               <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -530,6 +565,19 @@
                   <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sabor do Doce</label>
                   <input type="text" id="new-prod-name" placeholder="Ex: Brigadeiro Belga" required class="w-full border rounded p-2.5 text-sm">
                 </div>
+                
+                <!-- DROP ZONE DE IMAGEM -->
+                <div>
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Imagem do Produto</label>
+                  <div class="drop-zone relative p-4 text-center cursor-pointer flex flex-col items-center justify-center gap-1.5" id="drop-zone-new">
+                    <i class="fa-solid fa-cloud-arrow-up text-2xl text-[var(--verde-oliva-escuro)]"></i>
+                    <span class="text-xs font-bold text-[var(--texto-escuro)]">Arraste a imagem ou clique aqui</span>
+                    <span class="text-[10px] text-[var(--texto-suave)]">PNG, JPG ou WEBP</span>
+                    <input type="file" id="new-prod-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="updateFileName(this, 'new-file-name')">
+                  </div>
+                  <p id="new-file-name" class="text-[11px] text-[var(--verde-oliva-escuro)] italic font-bold mt-1.5 hidden"></p>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                   <div>
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Preço (R$)</label>
@@ -540,14 +588,13 @@
                     <input type="number" id="new-prod-stock" min="0" value="10" required class="w-full border rounded p-2.5 text-sm">
                   </div>
                 </div>
-                <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded text-xs transition uppercase tracking-wider mt-2">
+                <button type="submit" id="btn-save-prod" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded text-xs transition uppercase tracking-wider mt-2">
                   Cadastrar Produto
                 </button>
               </form>
             </div>
           </div>
 
-          <!-- Registrar Venda Pronta-Entrega -->
           <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-blue-600 flex flex-col justify-between">
             <div>
               <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -583,7 +630,6 @@
             </div>
           </div>
 
-          <!-- Adicionar Produção ao Estoque -->
           <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-green-600 flex flex-col justify-between">
             <div>
               <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -604,10 +650,8 @@
               </form>
             </div>
           </div>
-
         </div>
 
-        <!-- Tabela 1: Controle de Estoque -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
           <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
             <h3 class="font-bold text-gray-800 text-base sm:text-lg">1. Controle de Estoque</h3>
@@ -616,6 +660,7 @@
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
+                  <th class="p-3.5">Imagem</th>
                   <th class="p-3.5">Sabor do Doce</th>
                   <th class="p-3.5 text-center">Quantidade</th>
                   <th class="p-3.5">Preço Unitário</th>
@@ -628,7 +673,6 @@
           </div>
         </div>
 
-        <!-- Tabela 2: Registro de Vendas -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
           <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
             <h3 class="font-bold text-gray-800 text-base sm:text-lg">2. Histórico de Vendas (Pronta-Entrega)</h3>
@@ -651,7 +695,6 @@
           </div>
         </div>
 
-        <!-- Tabela 3: Agendamento de Encomendas -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
           <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
             <h3 class="font-bold text-gray-800 text-base sm:text-lg">3. Agendamento de Encomendas</h3>
@@ -681,7 +724,7 @@
     </main>
   </div>
 
-  <!-- ================= MODAL EDITAR PRODUTO ================= -->
+  <!-- MODAL EDITAR PRODUTO -->
   <div id="modal-edit-product" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8 space-y-5">
       <div class="flex justify-between items-center border-b border-[var(--dourado-logo)] pb-3">
@@ -696,6 +739,18 @@
           <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Sabor do Doce</label>
           <input type="text" id="edit-prod-name" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
         </div>
+        
+        <!-- DROP ZONE EDITAR IMAGEM -->
+        <div>
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nova Imagem (Opcional)</label>
+          <div class="drop-zone relative p-4 text-center cursor-pointer flex flex-col items-center justify-center gap-1.5" id="drop-zone-edit">
+            <i class="fa-solid fa-cloud-arrow-up text-2xl text-[var(--verde-oliva-escuro)]"></i>
+            <span class="text-xs font-bold text-[var(--texto-escuro)]">Arraste uma nova imagem ou clique</span>
+            <input type="file" id="edit-prod-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="updateFileName(this, 'edit-file-name')">
+          </div>
+          <p id="edit-file-name" class="text-[11px] text-[var(--verde-oliva-escuro)] italic font-bold mt-1.5 hidden"></p>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Preço (R$)</label>
@@ -708,7 +763,7 @@
         </div>
         <div class="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-3">
           <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-xs font-bold uppercase tracking-wider transition">Cancelar</button>
-          <button type="submit" class="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition">Salvar Alterações</button>
+          <button type="submit" id="btn-save-edit-prod" class="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition">Salvar Alterações</button>
         </div>
       </form>
     </div>
@@ -716,13 +771,12 @@
 
   <script>
     const SHOP_WHATSAPP = "5511999999999";
+    const DEFAULT_LOGO = "/LefourTrefle/unnamed.jpg";
 
-    // 1. OBTÉM AS CHAVES DO CONFIG.JS (window.env)
     const env = window.env || {};
     const SUPABASE_URL = env.SUPABASE_URL || '';
     const SUPABASE_KEY = env.SUPABASE_KEY || '';
 
-    // Inicialização direta do cliente Supabase
     let _supabase = null;
     if (SUPABASE_URL && SUPABASE_KEY) {
       _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -730,19 +784,155 @@
       console.error("Atenção: SUPABASE_URL ou SUPABASE_KEY não configurados no config.js!");
     }
 
-    // Sessão do Usuário (em memória/sessionStorage)
     let currentUser = JSON.parse(sessionStorage.getItem('le_four_trefle_user')) || null;
 
-    // Cache local dos dados
     let db = {
       flavors: [],
       sales: [],
       orders: []
     };
 
-    // =========================================================================
-    // 2. BUSCAR DADOS DO SUPABASE
-    // =========================================================================
+    // ATUALIZA O NOME DO ARQUIVO SELECIONADO NA INTERFACE
+    function updateFileName(input, labelId) {
+      const label = document.getElementById(labelId);
+      if (input.files && input.files[0]) {
+        label.innerText = `Arquivo selecionado: ${input.files[0].name}`;
+        label.classList.remove('hidden');
+      } else {
+        label.innerText = '';
+        label.classList.add('hidden');
+      }
+    }
+
+    // CONVERTE IMAGEM SELECIONADA PARA BASE64 (DATA URL)
+    function readFileAsBase64(fileInputId) {
+      return new Promise((resolve) => {
+        const fileInput = document.getElementById(fileInputId);
+        if (!fileInput || !fileInput.files.length) return resolve(null);
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // CONFIGURAÇÃO DOS EVENTOS DE DRAG & DROP
+    function setupDragAndDrop() {
+      const dropZones = [
+        { zone: document.getElementById('drop-zone-new'), input: document.getElementById('new-prod-file'), labelId: 'new-file-name' },
+        { zone: document.getElementById('drop-zone-edit'), input: document.getElementById('edit-prod-file'), labelId: 'edit-file-name' }
+      ];
+
+      dropZones.forEach(({ zone, input, labelId }) => {
+        if (!zone || !input) return;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          zone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            zone.classList.add('dragover');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          zone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            zone.classList.remove('dragover');
+          }, false);
+        });
+
+        zone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          if (dt && dt.files.length) {
+            input.files = dt.files;
+            updateFileName(input, labelId);
+          }
+        }, false);
+      });
+    }
+
+    function showRegisterView() {
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('view-register').classList.remove('hidden');
+    }
+
+    function showLoginView() {
+      document.getElementById('view-register').classList.add('hidden');
+      document.getElementById('view-login').classList.remove('hidden');
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const user = document.getElementById('reg-user').value.trim();
+      const pass = document.getElementById('reg-pass').value;
+      const passConfirm = document.getElementById('reg-pass-confirm').value;
+
+      if (pass !== passConfirm) {
+        alert('As senhas não coincidem!');
+        return;
+      }
+
+      if (!_supabase) {
+        alert('Erro de conexão com o Supabase. Verifique seu config.js');
+        return;
+      }
+
+      const { data, error } = await _supabase
+        .from('users')
+        .insert([{ username: user, pass: pass, role: 'client' }]);
+
+      if (error) {
+        if (error.message.includes('unique') || error.code === '23505') {
+          alert('Este nome de usuário já está cadastrado!');
+        } else {
+          alert('Erro ao cadastrar: ' + error.message);
+        }
+        return;
+      }
+
+      currentUser = { user: user, role: 'client' };
+      sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
+
+      alert(`Bem-vindo(a), ${user}! Seu cadastro foi realizado com sucesso.`);
+      initApp();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value.trim();
+      const pass = document.getElementById('login-pass').value;
+
+      if (!_supabase) {
+        alert('Erro de conexão com o Supabase. Verifique seu config.js');
+        return;
+      }
+
+      const { data, error } = await _supabase
+        .from('users')
+        .select('*')
+        .eq('username', user)
+        .eq('pass', pass)
+        .maybeSingle();
+
+      if (error || !data) {
+        alert('Usuário não cadastrado ou senha incorreta!');
+        return;
+      }
+
+      currentUser = { user: data.username, role: data.role };
+      sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
+      initApp();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      sessionStorage.removeItem('le_four_trefle_user');
+      initApp();
+    }
+
     async function loadDataFromSupabase() {
       if (!_supabase) return;
       try {
@@ -764,46 +954,28 @@
       }
     }
 
-    // Autenticação básica de interface
-    function handleLogin(e) {
-      e.preventDefault();
-      const user = document.getElementById('login-user').value.trim();
-      const pass = document.getElementById('login-pass').value;
-
-      if (user === 'MiguelFerreira' && pass === 'Rm2759@@') {
-        currentUser = { name: 'Miguel Ferreira', role: 'admin' };
-      } else if (user.length > 0 && pass.length >= 1 && pass.length <= 8) {
-        currentUser = { name: user, role: 'client' };
-      } else {
-        alert('Dados incorretos! Para clientes, a senha deve conter entre 1 e 8 caracteres.');
-        return;
-      }
-
-      sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
-      initApp();
-    }
-
-    function handleLogout() {
-      currentUser = null;
-      sessionStorage.removeItem('le_four_trefle_user');
-      initApp();
-    }
-
     async function initApp() {
       const loginView = document.getElementById('view-login');
+      const registerView = document.getElementById('view-register');
       const appContent = document.getElementById('app-content');
       const tabAdminBtn = document.getElementById('tab-admin');
       const userBadge = document.getElementById('user-badge');
 
       if (!currentUser) {
         loginView.classList.remove('hidden');
+        registerView.classList.add('hidden');
         appContent.classList.add('hidden');
         return;
       }
 
       loginView.classList.add('hidden');
+      registerView.classList.add('hidden');
       appContent.classList.remove('hidden');
-      userBadge.innerText = `${currentUser.name} (${currentUser.role === 'admin' ? 'Dono' : 'Cliente'})`;
+      userBadge.innerText = `${currentUser.user} (${currentUser.role === 'admin' ? 'Dono' : 'Cliente'})`;
+
+      if (currentUser.user && document.getElementById('cli-name')) {
+        document.getElementById('cli-name').value = currentUser.user;
+      }
 
       if (currentUser.role === 'admin') {
         tabAdminBtn.classList.remove('hidden');
@@ -813,7 +985,7 @@
         switchTab('client');
       }
 
-      // Busca os dados no Supabase
+      setupDragAndDrop();
       await loadDataFromSupabase();
     }
 
@@ -856,24 +1028,36 @@
       flavorsList.innerHTML = '';
 
       db.flavors.forEach(f => {
+        const prodImg = f.image_url || DEFAULT_LOGO;
+
         grid.innerHTML += `
-          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-pink-100 flex flex-col justify-between transition hover:-translate-y-1">
+          <div class="group bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden flex flex-col justify-between transition hover:-translate-y-1 hover:shadow-md">
             <div>
-              <div class="flex justify-between items-start mb-3 gap-2">
-                <h3 class="font-bold text-lg text-gray-800 leading-snug">${f.name}</h3>
-                ${getStatusBadge(f.stock)}
+              <div class="h-48 w-full overflow-hidden bg-gray-100 relative border-b border-[var(--dourado-logo)]/30">
+                <img src="${prodImg}" alt="${f.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${DEFAULT_LOGO}'">
+                <div class="absolute top-3 right-3 shadow-md">
+                  ${getStatusBadge(f.stock)}
+                </div>
               </div>
-              <p class="text-2xl font-black text-pink-600 mb-3">R$ ${Number(f.price).toFixed(2)}</p>
+              <div class="p-5 sm:p-6">
+                <h3 class="font-bold text-lg text-gray-800 leading-snug mb-2">${f.name}</h3>
+                <p class="text-2xl font-black text-pink-600">R$ ${Number(f.price).toFixed(2)}</p>
+              </div>
             </div>
-            <p class="text-xs text-gray-500 border-t border-[var(--dourado-logo)]/30 pt-3">Estoque disponível: <strong class="text-gray-700">${f.stock} unidades</strong></p>
+            <div class="px-5 pb-5 sm:px-6 sm:pb-6">
+              <p class="text-xs text-gray-500 border-t border-[var(--dourado-logo)]/30 pt-3">Estoque disponível: <strong class="text-gray-700">${f.stock} unidades</strong></p>
+            </div>
           </div>
         `;
 
         flavorsList.innerHTML += `
           <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
-            <div>
-              <p class="font-bold text-sm text-gray-800">${f.name}</p>
-              <p class="text-xs text-pink-600 font-semibold">R$ ${Number(f.price).toFixed(2)} cada</p>
+            <div class="flex items-center gap-3">
+              <img src="${prodImg}" alt="${f.name}" class="w-10 h-10 rounded-md object-cover border border-[var(--dourado-logo)]" onerror="this.src='${DEFAULT_LOGO}'">
+              <div>
+                <p class="font-bold text-sm text-gray-800">${f.name}</p>
+                <p class="text-xs text-pink-600 font-semibold">R$ ${Number(f.price).toFixed(2)} cada</p>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" onclick="changeFlavorQty(${f.id}, -1)" class="w-9 h-9 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition text-base">-</button>
@@ -922,12 +1106,15 @@
         addStockSelect.innerHTML += `<option value="${f.id}">${f.name}</option>`;
       });
 
-      // Tabela Estoque
       const stockBody = document.getElementById('table-stock-body');
-      stockBody.innerHTML = db.flavors.length ? '' : `<tr><td colspan="5" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>`;
+      stockBody.innerHTML = db.flavors.length ? '' : `<tr><td colspan="6" class="p-4 text-center text-gray-400">Nenhum produto cadastrado.</td></tr>`;
       db.flavors.forEach(f => {
+        const prodImg = f.image_url || DEFAULT_LOGO;
         stockBody.innerHTML += `
           <tr class="hover:bg-gray-50">
+            <td class="p-3.5">
+              <img src="${prodImg}" alt="${f.name}" class="w-10 h-10 rounded-md object-cover border border-[var(--dourado-logo)]" onerror="this.src='${DEFAULT_LOGO}'">
+            </td>
             <td class="p-3.5 font-medium">${f.name}</td>
             <td class="p-3.5 text-center font-bold">${f.stock}</td>
             <td class="p-3.5">R$ ${Number(f.price).toFixed(2)}</td>
@@ -944,7 +1131,6 @@
         `;
       });
 
-      // Tabela Vendas
       const salesBody = document.getElementById('table-sales-body');
       salesBody.innerHTML = db.sales.length ? '' : `<tr><td colspan="7" class="p-4 text-center text-gray-400">Nenhuma venda registrada.</td></tr>`;
       db.sales.forEach((s) => {
@@ -965,7 +1151,6 @@
         `;
       });
 
-      // Tabela Encomendas
       const ordersBody = document.getElementById('table-orders-body');
       ordersBody.innerHTML = db.orders.length ? '' : `<tr><td colspan="9" class="p-4 text-center text-gray-400">Nenhuma encomenda agendada.</td></tr>`;
       db.orders.forEach((o) => {
@@ -997,7 +1182,6 @@
         `;
       });
 
-      // Dashboard
       const totalRev = db.sales.reduce((acc, curr) => acc + Number(curr.total || 0), 0);
       const totalSold = db.sales.reduce((acc, curr) => acc + Number(curr.qty || 0), 0);
       const totalStock = db.flavors.reduce((acc, curr) => acc + Number(curr.stock || 0), 0);
@@ -1007,18 +1191,31 @@
       document.getElementById('dash-stock').innerText = `${totalStock} un`;
     }
 
-    // =========================================================================
-    // 3. OPERAÇÕES COM BANCO DE DADOS (SUPABASE CRUD)
-    // =========================================================================
-
-    // A. Cadastrar Novo Produto
+    // CADASTRAR PRODUTO COM CONVERSÃO DE IMAGEM PARA BASE64
     async function handleCreateProduct(e) {
       e.preventDefault();
       const name = document.getElementById('new-prod-name').value.trim();
       const price = parseFloat(document.getElementById('new-prod-price').value);
       const stock = parseInt(document.getElementById('new-prod-stock').value);
 
-      const { error } = await _supabase.from('flavors').insert([{ name, price, stock }]);
+      const btnSave = document.getElementById('btn-save-prod');
+      btnSave.innerText = "PROCESSANDO IMAGEM...";
+      btnSave.disabled = true;
+
+      // Lê a imagem e converte para Data URL / Base64
+      const imageUrl = await readFileAsBase64('new-prod-file');
+
+      const payload = { 
+        name, 
+        price, 
+        stock,
+        image_url: imageUrl || DEFAULT_LOGO 
+      };
+
+      const { error } = await _supabase.from('flavors').insert([payload]);
+
+      btnSave.innerText = "CADASTRAR PRODUTO";
+      btnSave.disabled = false;
 
       if (error) {
         alert("Erro ao cadastrar produto: " + error.message);
@@ -1027,10 +1224,10 @@
 
       await loadDataFromSupabase();
       e.target.reset();
-      alert(`Sabor "${name}" cadastrado no banco de dados!`);
+      document.getElementById('new-file-name').classList.add('hidden');
+      alert(`Sabor "${name}" cadastrado com sucesso!`);
     }
 
-    // B. Modal e Edição de Produto
     function openEditModal(flavorId) {
       const flavor = db.flavors.find(f => f.id === flavorId);
       if (!flavor) return;
@@ -1039,6 +1236,7 @@
       document.getElementById('edit-prod-name').value = flavor.name;
       document.getElementById('edit-prod-price').value = flavor.price;
       document.getElementById('edit-prod-stock').value = flavor.stock;
+      document.getElementById('edit-file-name').classList.add('hidden');
 
       document.getElementById('modal-edit-product').classList.remove('hidden');
     }
@@ -1047,6 +1245,7 @@
       document.getElementById('modal-edit-product').classList.add('hidden');
     }
 
+    // EDITAR PRODUTO COM SUPORTE À NOVA IMAGEM EM BASE64
     async function handleSaveEditProduct(e) {
       e.preventDefault();
       const id = parseInt(document.getElementById('edit-prod-id').value);
@@ -1054,10 +1253,22 @@
       const price = parseFloat(document.getElementById('edit-prod-price').value);
       const stock = parseInt(document.getElementById('edit-prod-stock').value);
 
+      const btnSave = document.getElementById('btn-save-edit-prod');
+      btnSave.innerText = "SALVANDO...";
+      btnSave.disabled = true;
+
+      const imageUrl = await readFileAsBase64('edit-prod-file');
+
+      const updatePayload = { name, price, stock };
+      if (imageUrl) updatePayload.image_url = imageUrl;
+
       const { error } = await _supabase
         .from('flavors')
-        .update({ name, price, stock })
+        .update(updatePayload)
         .eq('id', id);
+
+      btnSave.innerText = "SALVAR ALTERAÇÕES";
+      btnSave.disabled = false;
 
       if (error) {
         alert("Erro ao editar produto: " + error.message);
@@ -1068,7 +1279,6 @@
       closeEditModal();
     }
 
-    // C. Excluir Produto
     async function deleteFlavor(flavorId) {
       const flavor = db.flavors.find(f => f.id === flavorId);
       if (!flavor) return;
@@ -1083,7 +1293,6 @@
       }
     }
 
-    // D. Registrar Venda Direta
     async function handleDirectSale(e) {
       e.preventDefault();
       const flavorId = parseInt(document.getElementById('sale-flavor').value);
@@ -1099,7 +1308,6 @@
         return;
       }
 
-      // 1. Atualizar o estoque no Supabase
       const { error: errStock } = await _supabase
         .from('flavors')
         .update({ stock: flavor.stock - qty })
@@ -1110,7 +1318,6 @@
         return;
       }
 
-      // 2. Gravar a venda no Supabase
       const { error: errSale } = await _supabase.from('sales').insert([{
         date: new Date().toLocaleDateString('pt-BR'),
         client: client,
@@ -1129,12 +1336,11 @@
       e.target.reset();
     }
 
-    // E. Cancelar/Excluir Venda
     async function deleteSale(saleId) {
       const sale = db.sales.find(s => s.id === saleId);
       if (!sale) return;
 
-      if (confirm(`Deseja realmente cancelar/excluir a venda do cliente "${sale.client}"?`)) {
+      if (confirm(`Deseja realmente cancelar a venda do cliente "${sale.client}"?`)) {
         const restoreStock = confirm(`Deseja devolver as ${sale.qty} unidades de "${sale.flavor}" de volta ao estoque?`);
         
         if (restoreStock) {
@@ -1154,7 +1360,6 @@
       }
     }
 
-    // F. Adicionar Produção (Aumentar Estoque)
     async function handleAddStock(e) {
       e.preventDefault();
       const flavorId = parseInt(document.getElementById('add-stock-flavor').value);
@@ -1177,7 +1382,6 @@
       e.target.reset();
     }
 
-    // G. Criar Encomenda
     async function handleClientOrder(e) {
       e.preventDefault();
       const name = document.getElementById('cli-name').value.trim();
@@ -1211,7 +1415,6 @@
 
       const detailsStr = selectedItems.map(i => `${i.qty}x ${i.name}`).join(', ');
 
-      // Salva a encomenda no Supabase
       const { error } = await _supabase.from('orders').insert([{
         deliveryDate: date,
         client: name,
@@ -1229,7 +1432,6 @@
 
       await loadDataFromSupabase();
 
-      // Redireciona para o WhatsApp
       const itemsFormatted = selectedItems.map(i => `%0A• *${i.qty}x* ${i.name} (R$ ${i.total.toFixed(2)})`).join('');
       const text = `Olá! Gostaria de fazer uma encomenda na Lê Four Treflê:%0A*Cliente:* ${name}%0A*Data de Entrega:* ${date}%0A%0A*Itens Solicitados:*${itemsFormatted}%0A%0A*Valor Total:* R$ ${total.toFixed(2)}`;
 
@@ -1239,7 +1441,6 @@
       renderClientView();
     }
 
-    // H. Excluir Encomenda
     async function deleteOrder(orderId) {
       const order = db.orders.find(o => o.id === orderId);
       if (!order) return;
@@ -1254,7 +1455,6 @@
       }
     }
 
-    // I. Atualizar Status da Encomenda
     async function updateOrderStatus(orderId, newStatus) {
       const { error } = await _supabase
         .from('orders')
@@ -1268,7 +1468,6 @@
       await loadDataFromSupabase();
     }
 
-    // Inicializar Sistema ao carregar a página
     initApp();
   </script>
 </body>
