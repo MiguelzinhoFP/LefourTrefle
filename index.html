@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestão & Cardápio - Bolos no Pote</title>
+  <title>Lê Four Treflê - Gestão & Cardápio</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display para alta legibilidade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,33 +19,390 @@
 
   <!-- CARREGAMENTO DO CONFIG.JS (Substitui a leitura do .env) -->
   <script src="config.js"></script>
+
+  <style>
+    /* =========================================================
+       Sistema de Design: Lê Four Treflê (Tonalidades & Tipografia)
+       ========================================================= */
+    :root {
+      --verde-fundo-sage:     #C3CA9F;
+      --verde-fundo-suave:    #D5DCB8;
+      --verde-card-fundo:     #EBF0DA;
+      --verde-oliva-escuro:   #2D3E21;
+      --verde-oliva-medio:    #3A502B;
+      
+      --dourado-logo:         #CBB06B;
+      --dourado-hover:        #B59B55;
+      --dourado-escuro:       #9E8240;
+
+      --texto-escuro:         #24331A;
+      --texto-suave:          #3F4F33;
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+
+      /* Leve arredondamento suave (nem reto, nem cilíndrico) */
+      --radius: 10px;
+    }
+
+    /* Reset & Base Styling */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--verde-fundo-sage) !important;
+      color: var(--texto-escuro) !important;
+      font-family: var(--font-sans) !important;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif) !important;
+      font-weight: 700 !important;
+      color: var(--verde-oliva-escuro) !important;
+      letter-spacing: -0.01em;
+    }
+
+    /* Barra Superior Dourada */
+    body::before {
+      content: '';
+      display: block;
+      height: 4px;
+      background: linear-gradient(90deg, var(--dourado-escuro), var(--dourado-logo), var(--dourado-hover));
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 60;
+    }
+
+    /* Sobrescrita Estrutural de Cards e Conteiners */
+    .bg-white, .bg-pink-50, .bg-gray-50 {
+      background-color: var(--verde-card-fundo) !important;
+    }
+
+    .border, .border-pink-100, .border-gray-100, .border-gray-200, .border-b, .border-t, .border-l-4, .border-t-4 {
+      border-color: var(--dourado-logo) !important;
+    }
+
+    .rounded-xl, .rounded-2xl, .rounded-lg, .rounded-md, .rounded {
+      border-radius: var(--radius) !important;
+    }
+
+    .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow {
+      box-shadow: 0 4px 18px -2px rgba(45, 62, 33, 0.08) !important;
+    }
+
+    /* Cabeçalho */
+    header {
+      background: var(--verde-fundo-sage) !important;
+      border-bottom: 1px solid var(--dourado-logo) !important;
+      backdrop-filter: blur(8px);
+    }
+
+    .brand-serif {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--verde-oliva-escuro);
+      letter-spacing: 0.03em;
+    }
+
+    @media (min-width: 640px) {
+      .brand-serif {
+        font-size: 26px;
+      }
+    }
+
+    /* Navegação e Abas */
+    .bg-pink-700 {
+      background-color: transparent !important;
+    }
+
+    #tab-client, #tab-admin {
+      background: var(--verde-oliva-escuro) !important;
+      color: #FFFFFF !important;
+      border: 1px solid var(--dourado-logo) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 11px !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      font-weight: 700 !important;
+      padding: 10px 16px !important;
+      min-height: 42px;
+      border-radius: var(--radius) !important;
+      transition: all 0.25s ease !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #tab-client:hover, #tab-admin:hover,
+    #tab-client:focus-visible, #tab-admin:focus-visible {
+      background: var(--dourado-logo) !important;
+      color: var(--verde-oliva-escuro) !important;
+      border-color: var(--dourado-hover) !important;
+    }
+
+    /* Crachá de Usuário Logado */
+    #user-badge {
+      background-color: var(--verde-oliva-escuro) !important;
+      color: var(--dourado-logo) !important;
+      border: 1px solid var(--dourado-logo) !important;
+      font-family: var(--font-sans) !important;
+      border-radius: var(--radius) !important;
+    }
+
+    .border-pink-500 {
+      border-color: var(--dourado-logo) !important;
+    }
+
+    /* Cores de Texto Utilitárias */
+    .text-pink-600, .text-pink-700, .text-pink-800, .text-gray-800, .text-gray-700 {
+      color: var(--verde-oliva-escuro) !important;
+    }
+
+    .text-gray-500, .text-gray-600, .text-gray-400 {
+      color: var(--texto-suave) !important;
+    }
+
+    .border-pink-300 {
+      border-color: var(--dourado-logo) !important;
+    }
+
+    /* Formulários e Inputs Modernizados */
+    input:not([type="hidden"]), select, textarea {
+      background-color: #FFFFFF !important;
+      border: 1px solid var(--dourado-logo) !important;
+      color: var(--texto-escuro) !important;
+      border-radius: var(--radius) !important;
+      font-family: var(--font-sans) !important;
+      min-height: 44px;
+      padding: 10px 14px !important;
+      font-size: 14px !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none !important;
+      border-color: var(--verde-oliva-escuro) !important;
+      box-shadow: 0 0 0 2px rgba(45, 62, 33, 0.15) !important;
+    }
+
+    /* Oculta spinners de inputs numéricos */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* Botões Gerais de Ação */
+    button[type="submit"], 
+    button.bg-pink-600, 
+    button.bg-green-600, 
+    button.bg-blue-600 {
+      background-color: var(--verde-oliva-escuro) !important;
+      color: #FFFFFF !important;
+      border: 1px solid var(--dourado-logo) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 11px !important;
+      letter-spacing: 0.1em !important;
+      text-transform: uppercase !important;
+      font-weight: 700 !important;
+      border-radius: var(--radius) !important;
+      min-height: 44px;
+      padding: 10px 18px !important;
+      transition: all 0.25s ease !important;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover, 
+    button.bg-pink-600:hover, 
+    button.bg-green-600:hover, 
+    button.bg-blue-600:hover,
+    button[type="submit"]:focus-visible {
+      background-color: var(--dourado-logo) !important;
+      color: var(--verde-oliva-escuro) !important;
+      border-color: var(--dourado-hover) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Botões de Incremento / Decremento */
+    button.bg-pink-100 {
+      background-color: var(--verde-fundo-suave) !important;
+      color: var(--verde-oliva-escuro) !important;
+      border: 1px solid var(--dourado-logo) !important;
+      border-radius: var(--radius) !important;
+      min-width: 36px;
+      min-height: 36px;
+    }
+
+    button.bg-pink-100:hover {
+      background-color: var(--dourado-logo) !important;
+      color: var(--verde-oliva-escuro) !important;
+    }
+
+    .bg-pink-100\/60 {
+      background-color: var(--verde-fundo-suave) !important;
+      border: 1px solid var(--dourado-logo) !important;
+    }
+
+    /* Indicadores do Dashboard */
+    #view-admin > .grid > div {
+      background: var(--verde-card-fundo) !important;
+      border: 1px solid var(--dourado-logo) !important;
+      border-radius: var(--radius) !important;
+      transition: transform 0.2s ease;
+    }
+
+    #view-admin > .grid > div:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Tabelas Limpas */
+    .bg-white.rounded-xl.shadow-md.overflow-hidden {
+      border: 1px solid var(--dourado-logo) !important;
+      border-radius: var(--radius) !important;
+    }
+
+    table {
+      border-collapse: collapse !important;
+      width: 100% !important;
+    }
+
+    thead {
+      background-color: var(--verde-oliva-escuro) !important;
+    }
+
+    thead th {
+      color: var(--dourado-logo) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.05em !important;
+      text-transform: uppercase !important;
+      border-bottom: 1px solid var(--dourado-logo) !important;
+      white-space: nowrap !important;
+      padding: 12px 16px !important;
+    }
+
+    tbody tr {
+      background-color: var(--verde-card-fundo) !important;
+      border-bottom: 1px solid rgba(203, 176, 107, 0.4) !important;
+      transition: background-color 0.2s ease !important;
+    }
+
+    tbody tr:hover {
+      background-color: var(--verde-fundo-suave) !important;
+    }
+
+    tbody td {
+      white-space: nowrap !important;
+      padding: 12px 16px !important;
+    }
+
+    /* Badges de Status */
+    .bg-red-100 {
+      background-color: #E6C2C2 !important;
+      color: #5C1D1D !important;
+      border: 1px solid #C48E8E !important;
+      border-radius: var(--radius) !important;
+    }
+
+    .bg-yellow-100 {
+      background-color: #F0E6C2 !important;
+      color: #5C4A1D !important;
+      border: 1px solid #D6C48E !important;
+      border-radius: var(--radius) !important;
+    }
+
+    .bg-green-100 {
+      background-color: var(--verde-fundo-suave) !important;
+      color: var(--verde-oliva-escuro) !important;
+      border: 1px solid var(--dourado-logo) !important;
+      border-radius: var(--radius) !important;
+    }
+
+    /* Modal de Edição */
+    #modal-edit-product {
+      background-color: rgba(36, 51, 26, 0.7) !important;
+      backdrop-filter: blur(4px);
+    }
+
+    #modal-edit-product > div {
+      background-color: var(--verde-card-fundo) !important;
+      border: 1px solid var(--dourado-logo) !important;
+      border-radius: var(--radius) !important;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .bg-gray-200 {
+      background-color: transparent !important;
+      color: var(--verde-oliva-escuro) !important;
+      border: 1px solid var(--verde-oliva-escuro) !important;
+      border-radius: var(--radius) !important;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bg-gray-200:hover {
+      background-color: var(--verde-oliva-escuro) !important;
+      color: #FFFFFF !important;
+    }
+
+    /* Personalização de Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--verde-fundo-sage);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--dourado-logo);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--dourado-escuro);
+    }
+  </style>
 </head>
-<body class="bg-pink-50 min-h-screen text-gray-800 font-sans">
+<body class="bg-pink-50 min-h-screen text-gray-800 font-sans antialiased selection:bg-[#CBB06B] selection:text-[#2D3E21]">
 
   <!-- ================= TELA DE LOGIN ================= -->
-  <section id="view-login" class="flex items-center justify-center min-h-screen px-4">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-pink-100">
-      <div class="text-center mb-6">
-        <div class="bg-pink-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-          <i class="fa-solid fa-cake-candles text-pink-600 text-3xl"></i>
+  <section id="view-login" class="flex items-center justify-center min-h-[calc(100vh-4px)] px-4 py-8">
+    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-md border border-pink-100 transition-all duration-300">
+      <div class="text-center mb-8">
+        <div class="bg-pink-100 w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-4 border border-[var(--dourado-logo)] shadow-inner">
+          <i class="fa-solid fa-cookie-bite text-pink-600 text-3xl sm:text-4xl"></i>
         </div>
-        <h2 class="text-2xl font-bold text-gray-800">Doces Delícias</h2>
-        <p class="text-sm text-gray-500 mt-1">Acesse o sistema para continuar</p>
+        <h2 class="text-3xl font-bold text-gray-800 leading-tight">
+          <span class="brand-serif">Lê Four Treflê</span>
+        </h2>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium">Acesse o sistema para continuar</p>
       </div>
 
-      <form onsubmit="handleLogin(event)" class="space-y-4">
+      <form onsubmit="handleLogin(event)" class="space-y-5">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Usuário</label>
-          <input type="text" id="login-user" placeholder="Digite seu usuário" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Usuário</label>
+          <input type="text" id="login-user" placeholder="Digite seu usuário" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Senha</label>
-          <input type="password" id="login-pass" placeholder="Digite sua senha" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
-          <p class="text-[11px] text-gray-400 mt-1">Clientes: senha de 1 a 8 caracteres.</p>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Senha</label>
+          <input type="password" id="login-pass" placeholder="Digite sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          <p class="text-[11px] text-gray-500 mt-1.5">Clientes: senha de 1 a 8 caracteres.</p>
         </div>
 
-        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded-lg shadow-md transition text-sm">
+        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-lg shadow-md transition text-xs sm:text-sm tracking-widest uppercase">
           Entrar no Sistema
         </button>
       </form>
@@ -48,85 +410,87 @@
   </section>
 
   <!-- ================= APLICAÇÃO PRINCIPAL ================= -->
-  <div id="app-content" class="hidden">
+  <div id="app-content" class="hidden min-h-screen flex flex-col">
     
     <!-- Header / Navigation -->
     <header class="bg-pink-600 text-white shadow-lg sticky top-0 z-50">
-      <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-cake-candles text-2xl"></i>
-          <h1 class="text-2xl font-bold tracking-wide">Doces Delícias — Bolos no Pote</h1>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+        <div class="flex items-center gap-3 self-center sm:self-auto">
+          <i class="fa-solid fa-cookie-bite text-2xl sm:text-3xl" style="color: var(--dourado-escuro);"></i>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-wide flex items-center flex-wrap gap-1">
+            <span class="brand-serif">Lê Four Treflê</span>
+          </h1>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 sm:gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-[var(--dourado-logo)]/30">
           <!-- Guias de Navegação -->
-          <div class="flex bg-pink-700 rounded-lg p-1">
-            <button onclick="switchTab('client')" id="tab-client" class="px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow">
-              <i class="fa-solid fa-store mr-1"></i> Cardápio
+          <div class="flex bg-pink-700 rounded-lg p-0.5 sm:p-1 gap-1">
+            <button type="button" onclick="switchTab('client')" id="tab-client" class="px-3 py-2 rounded-md font-semibold text-xs transition bg-white text-pink-700 shadow">
+              <i class="fa-solid fa-store mr-1.5"></i> Cardápio
             </button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="hidden px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600">
-              <i class="fa-solid fa-user-gear mr-1"></i> Painel do Dono
+            <button type="button" onclick="switchTab('admin')" id="tab-admin" class="hidden px-3 py-2 rounded-md font-semibold text-xs transition text-white hover:bg-pink-600">
+              <i class="fa-solid fa-user-gear mr-1.5"></i> Painel do Dono
             </button>
           </div>
 
           <!-- Usuário Logado e Logout -->
           <div class="flex items-center gap-2 border-l border-pink-500 pl-3">
-            <span id="user-badge" class="text-xs bg-pink-800 px-2.5 py-1 rounded-full font-medium"></span>
-            <button onclick="handleLogout()" title="Sair" class="text-white hover:text-pink-200 p-1">
-              <i class="fa-solid fa-right-from-bracket text-lg"></i>
+            <span id="user-badge" class="text-[11px] sm:text-xs bg-pink-800 px-3 py-1.5 font-semibold"></span>
+            <button type="button" onclick="handleLogout()" title="Sair" class="text-white hover:text-pink-200 p-2 rounded-md transition hover:bg-black/10 flex items-center justify-center">
+              <i class="fa-solid fa-right-from-bracket text-base sm:text-lg"></i>
             </button>
           </div>
         </div>
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 flex-grow w-full">
 
       <!-- ================= VISÃO DO CLIENTE ================= -->
-      <section id="view-client" class="space-y-8">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-pink-300 pb-2">Nosso Cardápio</h2>
-          <p class="text-sm text-gray-600 mt-1">Confira nossos sabores disponíveis hoje ou faça uma encomenda personalizada!</p>
+      <section id="view-client" class="space-y-8 sm:space-y-12">
+        <div class="border-b-2 border-pink-300 pb-3">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Nosso Cardápio</h2>
+          <p class="text-xs sm:text-sm text-gray-600 mt-1">Confira nossos doces disponíveis hoje ou faça uma encomenda personalizada!</p>
         </div>
 
         <!-- Cardápio Grid -->
-        <div id="client-menu-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        <div id="client-menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
 
         <!-- Formulário de Encomenda Multi-Sabores -->
-        <div class="bg-white p-6 rounded-xl shadow-md border border-pink-100 max-w-2xl mx-auto mt-10">
-          <h3 class="text-xl font-bold text-pink-700 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-calendar-check"></i> Faça sua Encomenda
+        <div class="bg-white p-5 sm:p-8 rounded-xl shadow-md border border-pink-100 max-w-2xl mx-auto mt-8 sm:mt-12">
+          <h3 class="text-xl sm:text-2xl font-bold text-pink-700 mb-6 flex items-center gap-2.5">
+            <i class="fa-solid fa-calendar-check text-pink-600"></i> Faça sua Encomenda
           </h3>
-          <form id="form-client-order" onsubmit="handleClientOrder(event)" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form id="form-client-order" onsubmit="handleClientOrder(event)" class="space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Seu Nome</label>
-                <input type="text" id="cli-name" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Seu Nome</label>
+                <input type="text" id="cli-name" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-600 mb-1">Seu WhatsApp</label>
-                <input type="tel" id="cli-phone" placeholder="(11) 99999-9999" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Seu WhatsApp</label>
+                <input type="tel" id="cli-phone" placeholder="(11) 99999-9999" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
               </div>
             </div>
 
             <!-- Seleção de Múltiplos Sabores -->
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-2">Escolha os Sabores e Quantidades</label>
-              <div id="cli-flavors-list" class="space-y-2 border rounded-lg p-3 bg-gray-50 max-h-60 overflow-y-auto"></div>
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Escolha os Sabores e Quantidades</label>
+              <div id="cli-flavors-list" class="space-y-2.5 border rounded-lg p-3 sm:p-4 bg-gray-50 max-h-72 overflow-y-auto"></div>
               
               <!-- Total Calculado Dinamicamente -->
-              <div class="mt-3 flex justify-between items-center p-3 bg-pink-100/60 rounded-lg">
-                <span class="font-bold text-gray-700 text-sm">Valor Total do Pedido:</span>
-                <span id="cli-total-price" class="text-xl font-black text-pink-700">R$ 0,00</span>
+              <div class="mt-4 flex flex-row justify-between items-center p-4 bg-pink-100/60 rounded-lg border border-[var(--dourado-logo)]/50">
+                <span class="font-bold text-gray-700 text-xs sm:text-sm uppercase tracking-wider">Valor Total do Pedido:</span>
+                <span id="cli-total-price" class="text-xl sm:text-2xl font-black text-pink-700">R$ 0,00</span>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1">Data de Entrega / Retirada</label>
-              <input type="date" id="cli-date" required class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-pink-500 outline-none">
+              <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Data de Entrega / Retirada</label>
+              <input type="date" id="cli-date" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
             </div>
 
-            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-lg shadow transition flex items-center justify-center gap-2 text-xs sm:text-sm uppercase tracking-wider">
               <i class="fa-brands fa-whatsapp text-xl"></i> Enviar Encomenda pelo WhatsApp
             </button>
           </form>
@@ -134,174 +498,180 @@
       </section>
 
       <!-- ================= PAINEL DO DONO (ADMIN) ================= -->
-      <section id="view-admin" class="hidden space-y-8">
+      <section id="view-admin" class="hidden space-y-8 sm:space-y-10">
         
         <!-- Dashboard Resumo -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-green-500">
-            <p class="text-xs uppercase text-gray-500 font-bold">Faturamento Total (Vendas)</p>
-            <h3 id="dash-revenue" class="text-2xl font-black text-gray-800 mt-1">R$ 0,00</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border-l-4 border-green-500 flex flex-col justify-between">
+            <p class="text-xs uppercase text-gray-500 font-bold tracking-wider">Faturamento Total (Vendas)</p>
+            <h3 id="dash-revenue" class="text-2xl sm:text-3xl font-black text-gray-800 mt-2">R$ 0,00</h3>
           </div>
-          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-pink-500">
-            <p class="text-xs uppercase text-gray-500 font-bold">Total de Potes Vendidos</p>
-            <h3 id="dash-sold" class="text-2xl font-black text-gray-800 mt-1">0 un</h3>
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border-l-4 border-pink-500 flex flex-col justify-between">
+            <p class="text-xs uppercase text-gray-500 font-bold tracking-wider">Total de Doces Vendidos</p>
+            <h3 id="dash-sold" class="text-2xl sm:text-3xl font-black text-gray-800 mt-2">0 un</h3>
           </div>
-          <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
-            <p class="text-xs uppercase text-gray-500 font-bold">Estoque Total Restante</p>
-            <h3 id="dash-stock" class="text-2xl font-black text-gray-800 mt-1">0 un</h3>
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border-l-4 border-blue-500 flex flex-col justify-between">
+            <p class="text-xs uppercase text-gray-500 font-bold tracking-wider">Estoque Total Restante</p>
+            <h3 id="dash-stock" class="text-2xl sm:text-3xl font-black text-gray-800 mt-2">0 un</h3>
           </div>
         </div>
 
         <!-- Formulários Operacionais -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
           <!-- Cadastrar Novo Produto -->
-          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-pink-600">
-            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-folder-plus text-pink-600"></i> Cadastrar Novo Produto
-            </h3>
-            <form onsubmit="handleCreateProduct(event)" class="space-y-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600">Sabor do Bolo</label>
-                <input type="text" id="new-prod-name" placeholder="Ex: Brigadeiro Belga" required class="w-full border rounded p-2 text-sm">
-              </div>
-              <div class="grid grid-cols-2 gap-2">
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-pink-600 flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-folder-plus text-pink-600"></i> Cadastrar Novo Produto
+              </h3>
+              <form onsubmit="handleCreateProduct(event)" class="space-y-4">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600">Preço (R$)</label>
-                  <input type="number" step="0.01" id="new-prod-price" placeholder="12.00" required class="w-full border rounded p-2 text-sm">
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sabor do Doce</label>
+                  <input type="text" id="new-prod-name" placeholder="Ex: Brigadeiro Belga" required class="w-full border rounded p-2.5 text-sm">
                 </div>
-                <div>
-                  <label class="block text-xs font-semibold text-gray-600">Estoque Inicial</label>
-                  <input type="number" id="new-prod-stock" min="0" value="10" required class="w-full border rounded p-2 text-sm">
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Preço (R$)</label>
+                    <input type="number" step="0.01" id="new-prod-price" placeholder="12.00" required class="w-full border rounded p-2.5 text-sm">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Estoque Inicial</label>
+                    <input type="number" id="new-prod-stock" min="0" value="10" required class="w-full border rounded p-2.5 text-sm">
+                  </div>
                 </div>
-              </div>
-              <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 rounded text-sm transition">
-                Cadastrar Produto
-              </button>
-            </form>
+                <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 rounded text-xs transition uppercase tracking-wider mt-2">
+                  Cadastrar Produto
+                </button>
+              </form>
+            </div>
           </div>
 
           <!-- Registrar Venda Pronta-Entrega -->
-          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-blue-600">
-            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-cart-shopping text-blue-600"></i> Registrar Venda
-            </h3>
-            <form onsubmit="handleDirectSale(event)" class="space-y-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600">Cliente</label>
-                <input type="text" id="sale-client" required class="w-full border rounded p-2 text-sm">
-              </div>
-              <div class="grid grid-cols-2 gap-2">
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-blue-600 flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-blue-600"></i> Registrar Venda
+              </h3>
+              <form onsubmit="handleDirectSale(event)" class="space-y-4">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600">Sabor</label>
-                  <select id="sale-flavor" class="w-full border rounded p-2 text-sm"></select>
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cliente</label>
+                  <input type="text" id="sale-client" required class="w-full border rounded p-2.5 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sabor</label>
+                    <select id="sale-flavor" class="w-full border rounded p-2.5 text-sm"></select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantidade</label>
+                    <input type="number" id="sale-qty" min="1" value="1" required class="w-full border rounded p-2.5 text-sm">
+                  </div>
                 </div>
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600">Quantidade</label>
-                  <input type="number" id="sale-qty" min="1" value="1" required class="w-full border rounded p-2 text-sm">
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Pagamento</label>
+                  <select id="sale-pay" class="w-full border rounded p-2.5 text-sm">
+                    <option value="Pix">Pix</option>
+                    <option value="Cartão">Cartão</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                  </select>
                 </div>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-600">Pagamento</label>
-                <select id="sale-pay" class="w-full border rounded p-2 text-sm">
-                  <option value="Pix">Pix</option>
-                  <option value="Cartão">Cartão</option>
-                  <option value="Dinheiro">Dinheiro</option>
-                </select>
-              </div>
-              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-sm transition">
-                Registrar & Abater Estoque
-              </button>
-            </form>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded text-xs transition uppercase tracking-wider mt-2">
+                  Registrar & Abater Estoque
+                </button>
+              </form>
+            </div>
           </div>
 
           <!-- Adicionar Produção ao Estoque -->
-          <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-green-600">
-            <h3 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-plus-circle text-green-600"></i> Adicionar Produção
-            </h3>
-            <form onsubmit="handleAddStock(event)" class="space-y-3">
-              <div>
-                <label class="block text-xs font-semibold text-gray-600">Sabor</label>
-                <select id="add-stock-flavor" class="w-full border rounded p-2 text-sm"></select>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-gray-600">Quantidade Produzida</label>
-                <input type="number" id="add-stock-qty" min="1" value="10" required class="w-full border rounded p-2 text-sm">
-              </div>
-              <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded text-sm transition">
-                Adicionar ao Estoque
-              </button>
-            </form>
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-t-4 border-green-600 flex flex-col justify-between">
+            <div>
+              <h3 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-green-600"></i> Adicionar Produção
+              </h3>
+              <form onsubmit="handleAddStock(event)" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sabor</label>
+                  <select id="add-stock-flavor" class="w-full border rounded p-2.5 text-sm"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantidade Produzida</label>
+                  <input type="number" id="add-stock-qty" min="1" value="10" required class="w-full border rounded p-2.5 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded text-xs transition uppercase tracking-wider mt-2">
+                  Adicionar ao Estoque
+                </button>
+              </form>
+            </div>
           </div>
 
         </div>
 
         <!-- Tabela 1: Controle de Estoque -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-          <div class="p-4 bg-gray-50 border-b">
-            <h3 class="font-bold text-gray-700">1. Controle de Estoque</h3>
+          <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
+            <h3 class="font-bold text-gray-800 text-base sm:text-lg">1. Controle de Estoque</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
-                  <th class="p-3">Sabor do Bolo</th>
-                  <th class="p-3 text-center">Quantidade</th>
-                  <th class="p-3">Preço Unitário</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3 text-center">Ações</th>
+                  <th class="p-3.5">Sabor do Doce</th>
+                  <th class="p-3.5 text-center">Quantidade</th>
+                  <th class="p-3.5">Preço Unitário</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-center">Ações</th>
                 </tr>
               </thead>
-              <tbody id="table-stock-body" class="divide-y"></tbody>
+              <tbody id="table-stock-body" class="divide-y divide-[var(--dourado-logo)]/30"></tbody>
             </table>
           </div>
         </div>
 
         <!-- Tabela 2: Registro de Vendas -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-          <div class="p-4 bg-gray-50 border-b">
-            <h3 class="font-bold text-gray-700">2. Histórico de Vendas (Pronta-Entrega)</h3>
+          <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
+            <h3 class="font-bold text-gray-800 text-base sm:text-lg">2. Histórico de Vendas (Pronta-Entrega)</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
-                  <th class="p-3">Data</th>
-                  <th class="p-3">Cliente</th>
-                  <th class="p-3">Sabor</th>
-                  <th class="p-3 text-center">Qtd</th>
-                  <th class="p-3">Total (R$)</th>
-                  <th class="p-3">Pagamento</th>
-                  <th class="p-3 text-center">Ações</th>
+                  <th class="p-3.5">Data</th>
+                  <th class="p-3.5">Cliente</th>
+                  <th class="p-3.5">Sabor</th>
+                  <th class="p-3.5 text-center">Qtd</th>
+                  <th class="p-3.5">Total (R$)</th>
+                  <th class="p-3.5">Pagamento</th>
+                  <th class="p-3.5 text-center">Ações</th>
                 </tr>
               </thead>
-              <tbody id="table-sales-body" class="divide-y"></tbody>
+              <tbody id="table-sales-body" class="divide-y divide-[var(--dourado-logo)]/30"></tbody>
             </table>
           </div>
         </div>
 
         <!-- Tabela 3: Agendamento de Encomendas -->
         <div class="bg-white rounded-xl shadow-md overflow-hidden">
-          <div class="p-4 bg-gray-50 border-b">
-            <h3 class="font-bold text-gray-700">3. Agendamento de Encomendas</h3>
+          <div class="p-4 sm:p-5 bg-gray-50 border-b border-[var(--dourado-logo)]">
+            <h3 class="font-bold text-gray-800 text-base sm:text-lg">3. Agendamento de Encomendas</h3>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
               <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
-                  <th class="p-3">Entrega</th>
-                  <th class="p-3">Cliente</th>
-                  <th class="p-3">Contato</th>
-                  <th class="p-3">Detalhes</th>
-                  <th class="p-3">Total</th>
-                  <th class="p-3">Sinal</th>
-                  <th class="p-3">Restante</th>
-                  <th class="p-3">Status</th>
-                  <th class="p-3 text-center">Ações</th>
+                  <th class="p-3.5">Entrega</th>
+                  <th class="p-3.5">Cliente</th>
+                  <th class="p-3.5">Contato</th>
+                  <th class="p-3.5">Detalhes</th>
+                  <th class="p-3.5">Total</th>
+                  <th class="p-3.5">Sinal</th>
+                  <th class="p-3.5">Restante</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-center">Ações</th>
                 </tr>
               </thead>
-              <tbody id="table-orders-body" class="divide-y"></tbody>
+              <tbody id="table-orders-body" class="divide-y divide-[var(--dourado-logo)]/30"></tbody>
             </table>
           </div>
         </div>
@@ -312,31 +682,33 @@
   </div>
 
   <!-- ================= MODAL EDITAR PRODUTO ================= -->
-  <div id="modal-edit-product" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
-      <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-bold text-gray-800 text-lg">Editar Produto</h3>
-        <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+  <div id="modal-edit-product" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 sm:p-8 space-y-5">
+      <div class="flex justify-between items-center border-b border-[var(--dourado-logo)] pb-3">
+        <h3 class="font-bold text-gray-800 text-lg sm:text-xl">Editar Produto</h3>
+        <button type="button" onclick="closeEditModal()" class="text-gray-500 hover:text-gray-800 p-2 rounded-full transition">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
       </div>
-      <form onsubmit="handleSaveEditProduct(event)" class="space-y-3">
+      <form onsubmit="handleSaveEditProduct(event)" class="space-y-4">
         <input type="hidden" id="edit-prod-id">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Sabor do Bolo</label>
-          <input type="text" id="edit-prod-name" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Sabor do Doce</label>
+          <input type="text" id="edit-prod-name" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Preço (R$)</label>
-            <input type="number" step="0.01" id="edit-prod-price" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Preço (R$)</label>
+            <input type="number" step="0.01" id="edit-prod-price" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Estoque</label>
-            <input type="number" id="edit-prod-stock" min="0" required class="w-full border rounded p-2 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Estoque</label>
+            <input type="number" id="edit-prod-stock" min="0" required class="w-full border rounded p-2.5 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
           </div>
         </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-semibold transition">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-sm font-semibold transition">Salvar Alterações</button>
+        <div class="flex flex-col-reverse sm:flex-row justify-end gap-2.5 pt-3">
+          <button type="button" onclick="closeEditModal()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-xs font-bold uppercase tracking-wider transition">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition">Salvar Alterações</button>
         </div>
       </form>
     </div>
@@ -359,7 +731,7 @@
     }
 
     // Sessão do Usuário (em memória/sessionStorage)
-    let currentUser = JSON.parse(sessionStorage.getItem('bolo_pote_user')) || null;
+    let currentUser = JSON.parse(sessionStorage.getItem('le_four_trefle_user')) || null;
 
     // Cache local dos dados
     let db = {
@@ -407,13 +779,13 @@
         return;
       }
 
-      sessionStorage.setItem('bolo_pote_user', JSON.stringify(currentUser));
+      sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
       initApp();
     }
 
     function handleLogout() {
       currentUser = null;
-      sessionStorage.removeItem('bolo_pote_user');
+      sessionStorage.removeItem('le_four_trefle_user');
       initApp();
     }
 
@@ -455,18 +827,18 @@
       const btnAdmin = document.getElementById('tab-admin');
 
       if (tab === 'client') {
-        btnClient.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow";
-        btnAdmin.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600";
+        btnClient.className = "px-3 py-2 rounded-md font-semibold text-xs transition bg-white text-pink-700 shadow";
+        btnAdmin.className = "px-3 py-2 rounded-md font-semibold text-xs transition text-white hover:bg-pink-600";
       } else {
-        btnAdmin.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition bg-white text-pink-700 shadow";
-        btnClient.className = "px-3 py-1.5 rounded-md font-semibold text-xs md:text-sm transition text-white hover:bg-pink-600";
+        btnAdmin.className = "px-3 py-2 rounded-md font-semibold text-xs transition bg-white text-pink-700 shadow";
+        btnClient.className = "px-3 py-2 rounded-md font-semibold text-xs transition text-white hover:bg-pink-600";
       }
     }
 
     function getStatusBadge(stock) {
-      if (stock === 0) return `<span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded font-bold">Esgotado</span>`;
-      if (stock <= 3) return `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-bold">Últimas Unidades</span>`;
-      return `<span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-bold">Disponível</span>`;
+      if (stock === 0) return `<span class="bg-red-100 text-red-800 text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">Esgotado</span>`;
+      if (stock <= 3) return `<span class="bg-yellow-100 text-yellow-800 text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">Últimas Unidades</span>`;
+      return `<span class="bg-green-100 text-green-800 text-[11px] px-2.5 py-1 rounded font-bold uppercase tracking-wider">Disponível</span>`;
     }
 
     function renderAll() {
@@ -485,28 +857,28 @@
 
       db.flavors.forEach(f => {
         grid.innerHTML += `
-          <div class="bg-white p-5 rounded-xl shadow-sm border border-pink-100 flex flex-col justify-between">
+          <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-pink-100 flex flex-col justify-between transition hover:-translate-y-1">
             <div>
-              <div class="flex justify-between items-start mb-2">
-                <h3 class="font-bold text-lg text-gray-800">${f.name}</h3>
+              <div class="flex justify-between items-start mb-3 gap-2">
+                <h3 class="font-bold text-lg text-gray-800 leading-snug">${f.name}</h3>
                 ${getStatusBadge(f.stock)}
               </div>
-              <p class="text-2xl font-black text-pink-600 mb-2">R$ ${Number(f.price).toFixed(2)}</p>
+              <p class="text-2xl font-black text-pink-600 mb-3">R$ ${Number(f.price).toFixed(2)}</p>
             </div>
-            <p class="text-xs text-gray-500">Estoque disponível: ${f.stock} potes</p>
+            <p class="text-xs text-gray-500 border-t border-[var(--dourado-logo)]/30 pt-3">Estoque disponível: <strong class="text-gray-700">${f.stock} unidades</strong></p>
           </div>
         `;
 
         flavorsList.innerHTML += `
-          <div class="flex items-center justify-between bg-white p-2.5 rounded-lg border border-gray-200">
+          <div class="flex items-center justify-between bg-white p-3 rounded-lg border border-gray-200">
             <div>
               <p class="font-bold text-sm text-gray-800">${f.name}</p>
               <p class="text-xs text-pink-600 font-semibold">R$ ${Number(f.price).toFixed(2)} cada</p>
             </div>
             <div class="flex items-center gap-2">
-              <button type="button" onclick="changeFlavorQty(${f.id}, -1)" class="w-8 h-8 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition">-</button>
-              <input type="number" id="flavor-qty-${f.id}" value="0" min="0" readonly class="w-10 text-center bg-gray-50 border rounded-md p-1 text-sm font-bold text-gray-800">
-              <button type="button" onclick="changeFlavorQty(${f.id}, 1)" class="w-8 h-8 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition">+</button>
+              <button type="button" onclick="changeFlavorQty(${f.id}, -1)" class="w-9 h-9 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition text-base">-</button>
+              <input type="number" id="flavor-qty-${f.id}" value="0" min="0" readonly class="w-11 text-center bg-gray-50 border rounded-md p-1 text-sm font-bold text-gray-800 min-h-[36px]">
+              <button type="button" onclick="changeFlavorQty(${f.id}, 1)" class="w-9 h-9 bg-pink-100 hover:bg-pink-200 active:scale-95 text-pink-700 font-bold rounded-md flex items-center justify-center transition text-base">+</button>
             </div>
           </div>
         `;
@@ -556,15 +928,15 @@
       db.flavors.forEach(f => {
         stockBody.innerHTML += `
           <tr class="hover:bg-gray-50">
-            <td class="p-3 font-medium">${f.name}</td>
-            <td class="p-3 text-center font-bold">${f.stock}</td>
-            <td class="p-3">R$ ${Number(f.price).toFixed(2)}</td>
-            <td class="p-3">${getStatusBadge(f.stock)}</td>
-            <td class="p-3 text-center space-x-2">
-              <button onclick="openEditModal(${f.id})" class="text-blue-600 hover:text-blue-800 p-1" title="Editar Produto">
+            <td class="p-3.5 font-medium">${f.name}</td>
+            <td class="p-3.5 text-center font-bold">${f.stock}</td>
+            <td class="p-3.5">R$ ${Number(f.price).toFixed(2)}</td>
+            <td class="p-3.5">${getStatusBadge(f.stock)}</td>
+            <td class="p-3.5 text-center space-x-2">
+              <button onclick="openEditModal(${f.id})" class="text-blue-600 hover:text-blue-800 p-1.5 rounded transition" title="Editar Produto">
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
-              <button onclick="deleteFlavor(${f.id})" class="text-red-600 hover:text-red-800 p-1" title="Excluir Produto">
+              <button onclick="deleteFlavor(${f.id})" class="text-red-600 hover:text-red-800 p-1.5 rounded transition" title="Excluir Produto">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -578,14 +950,14 @@
       db.sales.forEach((s) => {
         salesBody.innerHTML += `
           <tr class="hover:bg-gray-50">
-            <td class="p-3 text-xs text-gray-500">${s.date}</td>
-            <td class="p-3 font-medium">${s.client}</td>
-            <td class="p-3">${s.flavor}</td>
-            <td class="p-3 text-center font-bold">${s.qty}</td>
-            <td class="p-3 font-bold text-green-700">R$ ${Number(s.total).toFixed(2)}</td>
-            <td class="p-3"><span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded">${s.payment}</span></td>
-            <td class="p-3 text-center">
-              <button onclick="deleteSale(${s.id})" class="text-red-600 hover:text-red-800 p-1" title="Cancelar/Excluir Venda">
+            <td class="p-3.5 text-xs text-gray-500">${s.date}</td>
+            <td class="p-3.5 font-medium">${s.client}</td>
+            <td class="p-3.5">${s.flavor}</td>
+            <td class="p-3.5 text-center font-bold">${s.qty}</td>
+            <td class="p-3.5 font-bold text-green-700">R$ ${Number(s.total).toFixed(2)}</td>
+            <td class="p-3.5"><span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded font-semibold">${s.payment}</span></td>
+            <td class="p-3.5 text-center">
+              <button onclick="deleteSale(${s.id})" class="text-red-600 hover:text-red-800 p-1.5 rounded transition" title="Cancelar/Excluir Venda">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -601,23 +973,23 @@
         const total = Number(o.total || 0);
         ordersBody.innerHTML += `
           <tr class="hover:bg-gray-50">
-            <td class="p-3 font-medium text-pink-700">${o.deliveryDate}</td>
-            <td class="p-3">${o.client}</td>
-            <td class="p-3">${o.phone}</td>
-            <td class="p-3">${o.details}</td>
-            <td class="p-3 font-bold">R$ ${total.toFixed(2)}</td>
-            <td class="p-3 text-green-600">R$ ${deposit.toFixed(2)}</td>
-            <td class="p-3 text-red-500 font-bold">R$ ${(total - deposit).toFixed(2)}</td>
-            <td class="p-3">
-              <select onchange="updateOrderStatus(${o.id}, this.value)" class="text-xs border rounded p-1 bg-white">
+            <td class="p-3.5 font-medium text-pink-700">${o.deliveryDate}</td>
+            <td class="p-3.5">${o.client}</td>
+            <td class="p-3.5">${o.phone}</td>
+            <td class="p-3.5">${o.details}</td>
+            <td class="p-3.5 font-bold">R$ ${total.toFixed(2)}</td>
+            <td class="p-3.5 text-green-600">R$ ${deposit.toFixed(2)}</td>
+            <td class="p-3.5 text-red-500 font-bold">R$ ${(total - deposit).toFixed(2)}</td>
+            <td class="p-3.5">
+              <select onchange="updateOrderStatus(${o.id}, this.value)" class="text-xs border rounded p-1 bg-white min-h-[32px]">
                 <option value="Aguardando Sinal" ${o.status === 'Aguardando Sinal' ? 'selected' : ''}>Aguardando Sinal</option>
                 <option value="Em Produção" ${o.status === 'Em Produção' ? 'selected' : ''}>Em Produção</option>
                 <option value="Pronto" ${o.status === 'Pronto' ? 'selected' : ''}>Pronto</option>
                 <option value="Entregue" ${o.status === 'Entregue' ? 'selected' : ''}>Entregue</option>
               </select>
             </td>
-            <td class="p-3 text-center">
-              <button onclick="deleteOrder(${o.id})" class="text-red-600 hover:text-red-800 p-1" title="Excluir Encomenda">
+            <td class="p-3.5 text-center">
+              <button onclick="deleteOrder(${o.id})" class="text-red-600 hover:text-red-800 p-1.5 rounded transition" title="Excluir Encomenda">
                 <i class="fa-solid fa-trash"></i>
               </button>
             </td>
@@ -763,7 +1135,7 @@
       if (!sale) return;
 
       if (confirm(`Deseja realmente cancelar/excluir a venda do cliente "${sale.client}"?`)) {
-        const restoreStock = confirm(`Deseja devolver os ${sale.qty} potes de "${sale.flavor}" de volta ao estoque?`);
+        const restoreStock = confirm(`Deseja devolver as ${sale.qty} unidades de "${sale.flavor}" de volta ao estoque?`);
         
         if (restoreStock) {
           const flavor = db.flavors.find(f => f.name === sale.flavor);
@@ -833,7 +1205,7 @@
       });
 
       if (selectedItems.length === 0) {
-        alert("Por favor, selecione pelo menos 1 pote de bolo para realizar a encomenda.");
+        alert("Por favor, selecione pelo menos 1 doce para realizar a encomenda.");
         return;
       }
 
@@ -859,7 +1231,7 @@
 
       // Redireciona para o WhatsApp
       const itemsFormatted = selectedItems.map(i => `%0A• *${i.qty}x* ${i.name} (R$ ${i.total.toFixed(2)})`).join('');
-      const text = `Olá! Gostaria de fazer uma encomenda:%0A*Cliente:* ${name}%0A*Data de Entrega:* ${date}%0A%0A*Itens Solicitados:*${itemsFormatted}%0A%0A*Valor Total:* R$ ${total.toFixed(2)}`;
+      const text = `Olá! Gostaria de fazer uma encomenda na Lê Four Treflê:%0A*Cliente:* ${name}%0A*Data de Entrega:* ${date}%0A%0A*Itens Solicitados:*${itemsFormatted}%0A%0A*Valor Total:* R$ ${total.toFixed(2)}`;
 
       window.open(`https://wa.me/${SHOP_WHATSAPP}?text=${text}`, '_blank');
       
