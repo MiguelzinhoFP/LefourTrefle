@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
@@ -370,7 +371,7 @@
 </head>
 <body class="bg-pink-50 min-h-screen text-gray-800 font-sans antialiased selection:bg-[#CBB06B] selection:text-[#2D3E21]">
 
-  <!-- ================= TELA DE LOGIN ================= -->
+  <!-- ================= TELA DE ENTRADA ================= -->
   <section id="view-login" class="flex items-center justify-center min-h-[calc(100vh-4px)] px-4 py-8">
     <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-md border border-pink-100 transition-all duration-300">
       <div class="text-center mb-8">
@@ -380,13 +381,13 @@
         <h2 class="text-3xl font-bold text-gray-800 leading-tight">
           <span class="brand-serif">Lê Four Treflê</span>
         </h2>
-        <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium">Acesse o sistema para continuar</p>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium">Digite seu nome e senha para acessar</p>
       </div>
 
       <form onsubmit="handleLogin(event)" class="space-y-5">
         <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Usuário</label>
-          <input type="text" id="login-user" placeholder="Digite seu usuário" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nome / Usuário</label>
+          <input type="text" id="login-user" placeholder="Digite seu nome" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
         </div>
 
         <div>
@@ -398,60 +399,6 @@
           Entrar no Sistema
         </button>
       </form>
-
-      <div class="mt-6 text-center border-t border-[var(--dourado-logo)]/40 pt-4">
-        <p class="text-xs text-gray-600">
-          Ainda não tem uma conta? 
-          <button type="button" onclick="showRegisterView()" class="font-bold text-[var(--verde-oliva-escuro)] hover:underline ml-1">
-            Cadastre-se aqui
-          </button>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ================= TELA DE CADASTRO ================= -->
-  <section id="view-register" class="hidden flex items-center justify-center min-h-[calc(100vh-4px)] px-4 py-8">
-    <div class="bg-white p-6 sm:p-10 rounded-2xl shadow-xl w-full max-w-md border border-pink-100 transition-all duration-300">
-      <div class="text-center mb-6">
-        <div class="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-[var(--dourado-logo)] shadow-md overflow-hidden bg-[var(--verde-card-fundo)]">
-          <img src="Logo.png" alt="Logo Lê Four Treflê" class="w-full h-full object-cover">
-        </div>
-        <h2 class="text-3xl font-bold text-gray-800 leading-tight">
-          <span class="brand-serif">Lê Four Treflê</span>
-        </h2>
-        <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium">Crie sua conta para continuar</p>
-      </div>
-
-      <form onsubmit="handleRegister(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Nome de Usuário</label>
-          <input type="text" id="reg-user" placeholder="Digite um usuário" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Senha</label>
-          <input type="password" id="reg-pass" placeholder="Crie sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Confirmar Senha</label>
-          <input type="password" id="reg-pass-confirm" placeholder="Confirme sua senha" required class="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-pink-500 outline-none">
-        </div>
-
-        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3.5 rounded-lg shadow-md transition text-xs sm:text-sm tracking-widest uppercase mt-2">
-          Cadastrar e Entrar
-        </button>
-      </form>
-
-      <div class="mt-6 text-center border-t border-[var(--dourado-logo)]/40 pt-4">
-        <p class="text-xs text-gray-600">
-          Já possui uma conta? 
-          <button type="button" onclick="showLoginView()" class="font-bold text-[var(--verde-oliva-escuro)] hover:underline ml-1">
-            Faça login aqui
-          </button>
-        </p>
-      </div>
     </div>
   </section>
 
@@ -854,75 +801,38 @@
       });
     }
 
-    function showRegisterView() {
-      document.getElementById('view-login').classList.add('hidden');
-      document.getElementById('view-register').classList.remove('hidden');
-    }
-
-    function showLoginView() {
-      document.getElementById('view-register').classList.add('hidden');
-      document.getElementById('view-login').classList.remove('hidden');
-    }
-
-    async function handleRegister(e) {
-      e.preventDefault();
-      const user = document.getElementById('reg-user').value.trim();
-      const pass = document.getElementById('reg-pass').value;
-      const passConfirm = document.getElementById('reg-pass-confirm').value;
-
-      if (pass !== passConfirm) {
-        alert('As senhas não coincidem!');
-        return;
-      }
-
-      if (!_supabase) {
-        alert('Erro de conexão com o Supabase. Verifique seu config.js');
-        return;
-      }
-
-      const { data, error } = await _supabase
-        .from('users')
-        .insert([{ username: user, pass: pass, role: 'client' }]);
-
-      if (error) {
-        if (error.message.includes('unique') || error.code === '23505') {
-          alert('Este nome de usuário já está cadastrado!');
-        } else {
-          alert('Erro ao cadastrar: ' + error.message);
-        }
-        return;
-      }
-
-      currentUser = { user: user, role: 'client' };
-      sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
-
-      alert(`Bem-vindo(a), ${user}! Seu cadastro foi realizado com sucesso.`);
-      initApp();
-    }
-
     async function handleLogin(e) {
       e.preventDefault();
       const user = document.getElementById('login-user').value.trim();
       const pass = document.getElementById('login-pass').value;
 
-      if (!_supabase) {
-        alert('Erro de conexão com o Supabase. Verifique seu config.js');
+      if (!user || !pass) {
+        alert('Por favor, informe seu nome e senha.');
         return;
       }
 
-      const { data, error } = await _supabase
-        .from('users')
-        .select('*')
-        .eq('username', user)
-        .eq('pass', pass)
-        .maybeSingle();
+      let userRole = 'client';
 
-      if (error || !data) {
-        alert('Usuário não cadastrado ou senha incorreta!');
-        return;
+      if (_supabase) {
+        // Verifica se existe uma conta cadastrada com esse usuário no banco de dados (ex: Administrador)
+        const { data: dbUser, error } = await _supabase
+          .from('users')
+          .select('*')
+          .eq('username', user)
+          .maybeSingle();
+
+        if (dbUser) {
+          // Se for uma conta registrada no banco (como o ADM), valida a senha obrigatoriamente
+          if (dbUser.pass === pass) {
+            userRole = dbUser.role || 'client';
+          } else {
+            alert('Senha incorreta!');
+            return;
+          }
+        }
       }
 
-      currentUser = { user: data.username, role: data.role };
+      currentUser = { user: user, role: userRole };
       sessionStorage.setItem('le_four_trefle_user', JSON.stringify(currentUser));
       initApp();
     }
@@ -956,20 +866,17 @@
 
     async function initApp() {
       const loginView = document.getElementById('view-login');
-      const registerView = document.getElementById('view-register');
       const appContent = document.getElementById('app-content');
       const tabAdminBtn = document.getElementById('tab-admin');
       const userBadge = document.getElementById('user-badge');
 
       if (!currentUser) {
         loginView.classList.remove('hidden');
-        registerView.classList.add('hidden');
         appContent.classList.add('hidden');
         return;
       }
 
       loginView.classList.add('hidden');
-      registerView.classList.add('hidden');
       appContent.classList.remove('hidden');
       userBadge.innerText = `${currentUser.user} (${currentUser.role === 'admin' ? 'Dono' : 'Cliente'})`;
 
@@ -1202,7 +1109,6 @@
       btnSave.innerText = "PROCESSANDO IMAGEM...";
       btnSave.disabled = true;
 
-      // Lê a imagem e converte para Data URL / Base64
       const imageUrl = await readFileAsBase64('new-prod-file');
 
       const payload = { 
